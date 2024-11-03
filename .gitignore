@@ -70,3 +70,9 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Tüm dosyalarda LF kullan
+* text eol=lf
+
+# Özel dosyalar için CRLF kullan (örneğin, bazı Windows script dosyaları)
+*.bat text eol=crlf
