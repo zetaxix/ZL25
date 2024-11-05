@@ -2,15 +2,21 @@ using Firebase;
 using Firebase.Auth;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class FirebaseManager : MonoBehaviour
 {
     public static FirebaseManager instance;
 
     FirebaseAuth firebaseAuth;
+    public FirebaseUser user;
+
+    public Toggle rememberMeToggle;
 
     private void Awake()
     {
+        findToggle();
+
         // Singleton yapýsýný oluþtur
         if (instance == null)
         {
@@ -33,6 +39,20 @@ public class FirebaseManager : MonoBehaviour
         });
     }
 
+    private void Update()
+    {
+        findToggle();
+    }
+
+    public void findToggle()
+    {
+        if(SceneManager.GetActiveScene().buildIndex == 0)
+        {
+            rememberMeToggle = GameObject.Find("RememberToggle").GetComponent<Toggle>();
+        }
+
+    }
+
     public void Register(string email, string password)
     {
         firebaseAuth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
@@ -50,7 +70,8 @@ public class FirebaseManager : MonoBehaviour
 
             AuthResult result = task.Result;
             FirebaseUser newUser = result.User;
-            SceneManager.LoadScene(1);
+            user = newUser;
+           
             Debug.LogFormat("User registered successfully: {0} ({1})", newUser.DisplayName, newUser.UserId);
         });
     }
@@ -71,12 +92,27 @@ public class FirebaseManager : MonoBehaviour
             }
 
             AuthResult result = task.Result;
-            FirebaseUser user = result.User;
+            user = result.User;
 
+            FirebaseUIManager.Instance.isAccountPass = true;
+            FirebaseUIManager.Instance.isRememberMe = true;
+            
             Debug.Log("<color=green> User signed in successfully: </color>" + user.DisplayName + " User Id: " + user.UserId);
 
-            SceneManager.LoadScene(1);
         });
+    }
+
+    public void SignOut()
+    {
+        if (firebaseAuth != null)
+        {
+            firebaseAuth.SignOut();
+            Debug.Log("User signed out successfully.");
+        }
+        else
+        {
+            Debug.LogError("FirebaseAuth instance is null! Sign out failed.");
+        }
     }
 
     public void ResetPassword(string email)
