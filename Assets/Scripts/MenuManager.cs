@@ -37,11 +37,15 @@ public class MenuManager : MonoBehaviour
         if (FirebaseManager.instance != null && user != null)
         {
             CheckAndCreateUserDocument();
-            GetUsername();
         } else
         {
             Debug.LogError("FirebaseManager instance or user is null!");
         }
+    }
+
+    private void Update()
+    {
+        GetUsername();
     }
 
     // Kullanıcı dökümanını kontrol et ve yoksa oluştur
@@ -57,7 +61,7 @@ public class MenuManager : MonoBehaviour
                     if (!snapshot.Exists)
                     {
                         // Kullanıcı dökümanı yoksa oluştur
-                        var userData = new Dictionary<string, object> { { "Username", string.Empty } };
+                        var userData = new Dictionary<string, object> { { "Username", string.Empty }, { "Money", 1000 } };
 
                         docRef.SetAsync(userData).ContinueWithOnMainThread(setTask =>
                         {
@@ -185,5 +189,20 @@ public class MenuManager : MonoBehaviour
 
         FirebaseManager.instance.SignOut();
         SceneManager.LoadScene(0);
+    }
+
+    public void BackToMenu()
+    {
+        ScreenControl(1);
+    }
+
+    public void GoToShopScene()
+    {
+        ScreenControl(2);
+    }
+
+    void ScreenControl(int sceneIndex)
+    {
+        SceneManager.LoadScene(sceneIndex);
     }
 }
