@@ -158,6 +158,6 @@ public class ShopManager : MonoBehaviour
     public void BackToMenu()
     {
         SceneManager.LoadScene(1);
-    }
+    } 
 
 }

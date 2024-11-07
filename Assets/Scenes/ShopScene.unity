@@ -1631,7 +1631,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &792211020
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2541,8 +2541,8 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 100, y: 100}
-  m_Spacing: {x: 402.3, y: 653.5}
+  m_CellSize: {x: 70, y: 100}
+  m_Spacing: {x: 402.3, y: 691.3}
   m_Constraint: 0
   m_ConstraintCount: 2
 --- !u!1 &1079309079
@@ -2727,6 +2727,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 908208724}
+        m_TargetAssemblyTypeName: MyPackagesManager, Assembly-CSharp
+        m_MethodName: LoadUserPackages
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &1084675555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2780,7 +2792,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1297220005
 RectTransform:
   m_ObjectHideFlags: 0

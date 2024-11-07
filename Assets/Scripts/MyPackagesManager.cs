@@ -15,7 +15,9 @@ public class MyPackagesManager : MonoBehaviour
     [SerializeField] GameObject bronzePackagePrefab;
     [SerializeField] GameObject silverPackagePrefab;
     [SerializeField] GameObject goldPackagePrefab;
-    [SerializeField] Transform packagesParent; // Paketleri eklemek için kullanýlan parent obje
+    [SerializeField] Transform packagesParent;
+
+    private Dictionary<string, GameObject> packageObjects = new Dictionary<string, GameObject>();
 
     private void Start()
     {
@@ -25,7 +27,7 @@ public class MyPackagesManager : MonoBehaviour
         LoadUserPackages();
     }
 
-    private void LoadUserPackages()
+    public void LoadUserPackages()
     {
         if (user == null)
         {
@@ -40,29 +42,9 @@ public class MyPackagesManager : MonoBehaviour
             {
                 DocumentSnapshot snapshot = task.Result;
 
-                // Bronze Package varsa göster
-                if (snapshot.ContainsField("Bronze Package"))
-                {
-                    var bronzeData = snapshot.GetValue<Dictionary<string, object>>("Bronze Package");
-                    int count = Convert.ToInt32(bronzeData["count"]);
-                    CreatePackageUI(bronzePackagePrefab, count);
-                }
-
-                // Silver Package varsa göster
-                if (snapshot.ContainsField("Silver Package"))
-                {
-                    var silverData = snapshot.GetValue<Dictionary<string, object>>("Silver Package");
-                    int count = Convert.ToInt32(silverData["count"]);
-                    CreatePackageUI(silverPackagePrefab, count);
-                }
-
-                // Gold Package varsa göster
-                if (snapshot.ContainsField("Gold Package"))
-                {
-                    var goldData = snapshot.GetValue<Dictionary<string, object>>("Gold Package");
-                    int count = Convert.ToInt32(goldData["count"]);
-                    CreatePackageUI(goldPackagePrefab, count);
-                }
+                UpdateOrCreatePackageUI("Bronze Package", snapshot, bronzePackagePrefab);
+                UpdateOrCreatePackageUI("Silver Package", snapshot, silverPackagePrefab);
+                UpdateOrCreatePackageUI("Gold Package", snapshot, goldPackagePrefab);
             }
             else
             {
@@ -71,11 +53,73 @@ public class MyPackagesManager : MonoBehaviour
         });
     }
 
-    private void CreatePackageUI(GameObject packagePrefab, int count)
+    private void UpdateOrCreatePackageUI(string packageName, DocumentSnapshot snapshot, GameObject packagePrefab)
     {
-        // Paketi UI'ya ekle
-        GameObject packageObject = Instantiate(packagePrefab, packagesParent);
+        if (snapshot.ContainsField(packageName))
+        {
+            var packageData = snapshot.GetValue<Dictionary<string, object>>(packageName);
+            int count = Convert.ToInt32(packageData["count"]);
 
-        // Paket sayýsýna göre burada diðer özelleþtirmeleri yapabilirsiniz
+            if (count > 0)
+            {
+                if (packageObjects.ContainsKey(packageName))
+                {
+                    // Paket zaten varsa, sadece sayýyý güncelle
+                    TextMeshProUGUI countText = packageObjects[packageName].transform.Find("CountText").GetComponent<TextMeshProUGUI>();
+                    countText.text = $"x{count}";
+                }
+                else
+                {
+                    // Paket yoksa, yeni oluþtur
+                    GameObject packageObject = Instantiate(packagePrefab, packagesParent);
+                    TextMeshProUGUI countText = packageObject.transform.Find("CountText").GetComponent<TextMeshProUGUI>();
+                    countText.text = $"x{count}";
+
+                    // Butona týklama iþlemi ekle ve count'u azalt
+                    Button openButton = packageObject.transform.Find("Button").GetComponent<Button>();
+                    openButton.onClick.AddListener(() =>
+                    {
+                        if (count > 0)
+                        {
+                            count--;
+                            countText.text = $"x{count}";
+                            Debug.Log($"{packageName} açýldý!");
+
+                            // Firebase Firestore'da güncelleme
+                            DocumentReference docRef = db.Collection("users").Document(user.UserId);
+                            Dictionary<string, object> updates = new Dictionary<string, object>
+                            {
+                                { $"{packageName}.count", count }
+                            };
+                            docRef.UpdateAsync(updates).ContinueWithOnMainThread(updateTask =>
+                            {
+                                if (updateTask.IsCompleted)
+                                {
+                                    Debug.Log($"{packageName} güncellendi. Kalan: {count}");
+
+                                    // Eðer count sýfýrsa UI'dan kaldýr
+                                    if (count == 0)
+                                    {
+                                        Destroy(packageObject);
+                                        packageObjects.Remove(packageName);
+                                    }
+                                }
+                                else
+                                {
+                                    Debug.LogError($"{packageName} güncellenemedi: " + updateTask.Exception);
+                                }
+                            });
+                        }
+                        else
+                        {
+                            Debug.Log($"{packageName} tükendi!");
+                        }
+                    });
+
+                    // Oluþturulan paketi kaydet
+                    packageObjects[packageName] = packageObject;
+                }
+            }
+        }
     }
 }
