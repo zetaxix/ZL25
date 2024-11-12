@@ -15,6 +15,8 @@ public class CardManager : MonoBehaviour
     [SerializeField] GameObject footballerCardPrefab;
     [SerializeField] Transform cardParent;  // Kartlarýn gösterileceði alan
 
+    [SerializeField] ParticleSystem fireWorkSystem;
+
     // Paket türünü alacak bir fonksiyon
     public void SetPackageType(string packageType)
     {
@@ -94,6 +96,8 @@ public class CardManager : MonoBehaviour
             teamLogoImage.texture = footballer.teamLogo;
         }
 
+        StartCoroutine(FireworkEffect());
+
         Debug.Log("Futbolcu Kartý Oluþturuldu: " + footballer.name);
     }
 
@@ -111,6 +115,12 @@ public class CardManager : MonoBehaviour
         {
             return price.ToString() + "€";
         }
+    }
+
+    IEnumerator FireworkEffect()
+    {
+        yield return new WaitForSeconds(3);
+        fireWorkSystem.gameObject.SetActive(true);
     }
 
 }
