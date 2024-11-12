@@ -1,163 +1,134 @@
-using Firebase.Auth;
-using Firebase.Extensions;
-using Firebase.Firestore;
-using System;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ShopManager : MonoBehaviour
 {
-    FirebaseUser user;
-    FirebaseFirestore db;
-
     [SerializeField] TextMeshProUGUI moneyText;
+    private string jsonFilePath;
+
+    [Header("Buttons")]
+    [SerializeField] Button BronzeButton;
+    [SerializeField] Button SilverButton;
+    [SerializeField] Button GoldButton;
 
     private void Awake()
     {
-        // Firebase kullanýcý ve Firestore baðlantýlarýný ayarla
-        user = FirebaseManager.instance.user;
-        db = FirebaseFirestore.DefaultInstance;
+        BronzeButton.onClick.AddListener(() => BuyPackage("Bronze"));
+        SilverButton.onClick.AddListener(() => BuyPackage("Silver"));
+        GoldButton.onClick.AddListener(() => BuyPackage("Gold"));
+
+        PlayerPrefs.SetInt("money", 100000);
     }
 
     private void Start()
     {
-        GetUserMoney();
+        jsonFilePath = Path.Combine(Application.persistentDataPath, "mypackages.json");
+        InitializePackagesJson();
     }
 
-    public void BuyBronzePackage()
+    private void Update()
     {
-        PurchasePackage("Bronze Package", 20);
+        UpdateMoneyUI();
     }
 
-    public void BuySilverPackage()
-    {
-        PurchasePackage("Silver Package", 40);
-    }
-
-    public void BuyGoldPackage()
-    {
-        PurchasePackage("Gold Package", 100);
-    }
-
-    private bool isUpdatingMoney = false; // Bu flag güncelleme sýrasýnda yeni sorgulamalarý engellemek için
-
-    //Paket Satýn Alma Fonksiyonu
-    public void PurchasePackage(string packageName, int price)
-    {
-        if (user != null)
-        {
-            DocumentReference docRef = db.Collection("users").Document(user.UserId);
-
-            // Kullanýcýnýn mevcut parasýný kontrol et ve paketi satýn alacak kadar parasý olup olmadýðýný kontrol et
-            docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
-            {
-                if (task.IsCompleted && task.Result.Exists)
-                {
-                    DocumentSnapshot snapshot = task.Result;
-
-                    // Kullanýcýnýn money deðeri mevcutsa çek
-                    if (snapshot.ContainsField("Money"))
-                    {
-                        long money = snapshot.GetValue<long>("Money");
-
-                        if (money >= price)
-                        {
-                            long newMoney = money - price;
-
-                            Dictionary<string, object> packageData = new Dictionary<string, object>();
-                            if (snapshot.ContainsField(packageName))
-                            {
-                                packageData = snapshot.GetValue<Dictionary<string, object>>(packageName);
-                                int currentCount = packageData.ContainsKey("count") ? Convert.ToInt32(packageData["count"]) : 0;
-                                packageData["count"] = currentCount + 1;
-                            }
-                            else
-                            {
-                                packageData["count"] = 1;
-                            }
-
-                            Dictionary<string, object> updates = new Dictionary<string, object>
-                        {
-                            { "Money", newMoney },
-                            { packageName, packageData }
-                        };
-
-                            isUpdatingMoney = true;
-
-                            docRef.UpdateAsync(updates).ContinueWithOnMainThread(updateTask =>
-                            {
-                                if (updateTask.IsCompleted)
-                                {
-                                    Debug.Log($"{packageName} baþarýyla satýn alýndý ve kaydedildi. Yeni bakiye: {newMoney}");
-                                    moneyText.text = $"Money: €{newMoney:N0}";
-                                }
-                                else
-                                {
-                                    Debug.LogError("Güncelleme sýrasýnda hata oluþtu: " + updateTask.Exception);
-                                }
-
-                                isUpdatingMoney = false;
-                            });
-                        }
-                        else
-                        {
-                            Debug.LogWarning("Yeterli bakiye yok.");
-                            moneyText.text = "Yeterli bakiye yok!";
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Money bilgisi bulunamadý.");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("Kullanýcý dokümanýný alýrken hata oluþtu: " + task.Exception);
-                }
-            });
-        }
-        else
-        {
-            Debug.LogError("User is null. Cannot purchase package.");
-        }
-    }
-
-    //Kullanýcý Money Verisi Çekme Fonksiyonu
-    void GetUserMoney()
-    {
-        if (isUpdatingMoney || user == null) return; // Güncelleme sýrasýnda yeni bir çekim yapýlmasýný engelle
-
-        DocumentReference docRef = db.Collection("users").Document(user.UserId);
-        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
-        {
-            if (task.IsCompleted && task.Result.Exists)
-            {
-                DocumentSnapshot snapshot = task.Result;
-
-                if (snapshot.ContainsField("Money"))
-                {
-                    long money = snapshot.GetValue<long>("Money");
-                    moneyText.text = $"Money: €{money:N0}";
-                }
-                else
-                {
-                    moneyText.text = "Money: €0";
-                }
-            }
-            else
-            {
-                Debug.LogError("Kullanýcý dokümanýný alýrken hata oluþtu: " + task.Exception);
-                moneyText.text = "Money: €0";
-            }
-        });
-    }
-
-    //Menüye Dönme
     public void BackToMenu()
     {
         SceneManager.LoadScene(1);
-    } 
+    }
 
+    private void UpdateMoneyUI()
+    {
+        int currentMoney = PlayerPrefs.GetInt("money", 1000);
+        moneyText.text = $"Money: €{currentMoney.ToString("N0")}";
+    }
+
+    private void InitializePackagesJson()
+    {
+        if (!File.Exists(jsonFilePath))
+        {
+            PackageDataContainer initialData = new PackageDataContainer
+            {
+                packages = new List<PackageData>
+                {
+                    new PackageData { name = "Bronze", count = 0 },
+                    new PackageData { name = "Silver", count = 0 },
+                    new PackageData { name = "Gold", count = 0 }
+                }
+            };
+
+            string json = JsonUtility.ToJson(initialData, true);
+            File.WriteAllText(jsonFilePath, json);
+        }
+    }
+
+    public void BuyPackage(string packageType)
+    {
+        int currentMoney = PlayerPrefs.GetInt("money", 1000);
+        int packageCost = GetPackageCost(packageType);
+
+        if (currentMoney >= packageCost)
+        {
+            currentMoney -= packageCost;
+            PlayerPrefs.SetInt("money", currentMoney);
+            UpdateMoneyUI();
+            Debug.Log($"{packageType} paketi satýn alýndý. Kalan para: {currentMoney}");
+
+            // JSON dosyasýna satýn alma iþlemini kaydet
+            UpdatePackageJson(packageType);
+        }
+        else
+        {
+            Debug.Log("Yetersiz bakiye!");
+        }
+    }
+
+    private int GetPackageCost(string packageType)
+    {
+        return packageType switch
+        {
+            "Bronze" => 20,
+            "Silver" => 40,
+            "Gold" => 100,
+            _ => 0
+        };
+    }
+
+    private void UpdatePackageJson(string packageType)
+    {
+        if (File.Exists(jsonFilePath))
+        {
+            string json = File.ReadAllText(jsonFilePath);
+            PackageDataContainer packageDataContainer = JsonUtility.FromJson<PackageDataContainer>(json);
+
+            foreach (var package in packageDataContainer.packages)
+            {
+                if (package.name == packageType)
+                {
+                    package.count += 1;
+                    break;
+                }
+            }
+
+            json = JsonUtility.ToJson(packageDataContainer, true);
+            File.WriteAllText(jsonFilePath, json);
+        }
+    }
+}
+
+[System.Serializable]
+public class PackageData
+{
+    public string name;
+    public int count;
+}
+
+[System.Serializable]
+public class PackageDataContainer
+{
+    public List<PackageData> packages;
 }
