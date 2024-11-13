@@ -1,3 +1,4 @@
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -35,8 +36,22 @@ public class MenuManager : MonoBehaviour
 
     public void UserSignOutMethod()
     {
+        // Kullanýcý adýný sil
         PlayerPrefs.DeleteKey("username");
 
+        // mypackages.json dosyasýný sil
+        string filePath = Path.Combine(Application.persistentDataPath, "mypackages.json");
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+            Debug.Log("mypackages.json dosyasý silindi.");
+        }
+        else
+        {
+            Debug.LogWarning("mypackages.json dosyasý bulunamadý.");
+        }
+
+        // Ana sahneye dön
         SceneManager.LoadScene(0);
     }
 

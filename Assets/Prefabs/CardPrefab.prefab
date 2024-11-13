@@ -116,6 +116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fadeSoundEffect: {fileID: 8300000, guid: 3b700bb9697fe7c45b6f7433b912307f, type: 3}
+  fireworkSoundEffect: {fileID: 0}
 --- !u!82 &6117048623064187090
 AudioSource:
   m_ObjectHideFlags: 0

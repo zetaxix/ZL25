@@ -11,11 +11,22 @@ public class CardManager : MonoBehaviour
     public List<Footballer> silverPackage = new List<Footballer>();
     public List<Footballer> goldPackage = new List<Footballer>();
 
+    [Header("Footballer Card Settings")]
     // Kart Prefab'ý
     [SerializeField] GameObject footballerCardPrefab;
-    [SerializeField] Transform cardParent;  // Kartlarýn gösterileceði alan
 
-    [SerializeField] ParticleSystem fireWorkSystem;
+    [Header("Card Pics")]
+    [SerializeField] Texture2D BronzeCardPicture;
+    [SerializeField] Texture2D SilverCardPicture;
+    [SerializeField] Texture2D GoldCardPicture;
+
+    [Header("ParticleSystems")]
+    [SerializeField] ParticleSystem bronzeFireworkSystem;
+    [SerializeField] ParticleSystem silverFireworkSystem;
+    [SerializeField] ParticleSystem goldFireworkSystem;
+
+    // Kartýn sahnedeki referansý
+    private GameObject card;
 
     // Paket türünü alacak bir fonksiyon
     public void SetPackageType(string packageType)
@@ -35,7 +46,6 @@ public class CardManager : MonoBehaviour
         if (packageType == "Bronze")
         {
             selectedPackage = bronzePackage;
-            Debug.Log("Bronz Seçildi!");
         }
         else if (packageType == "Silver")
         {
@@ -53,7 +63,7 @@ public class CardManager : MonoBehaviour
             Footballer selectedFootballer = selectedPackage[randomIndex];
 
             // Kartý oluþtur
-            CreateFootballerCard(selectedFootballer);
+            CreateFootballerCard(selectedFootballer, packageType);
         }
         else
         {
@@ -62,41 +72,72 @@ public class CardManager : MonoBehaviour
     }
 
     // Futbolcu kartý oluþturma
-    void CreateFootballerCard(Footballer footballer)
+    void CreateFootballerCard(Footballer footballer, string cardType)
     {
-        GameObject card = Instantiate(footballerCardPrefab, cardParent);
+        card = Instantiate(footballerCardPrefab, footballerCardPrefab.transform.position, footballerCardPrefab.transform.rotation);
+
+        // Card'daki renderer bileþenine ulaþýn
+        Renderer cardRenderer = card.GetComponent<Renderer>();
+        if (cardRenderer == null)
+        {
+            Debug.LogError("Kart üzerinde Renderer bileþeni bulunamadý.");
+            return;
+        }
+
+        // Deðiþtirilecek texture'ý belirleyin
+        Texture2D selectedTexture = null;
+        if (cardType == "Bronze")
+        {
+            selectedTexture = BronzeCardPicture;
+        }
+        else if (cardType == "Silver")
+        {
+            selectedTexture = SilverCardPicture;
+        }
+        else if (cardType == "Gold")
+        {
+            selectedTexture = GoldCardPicture;
+        }
+
+        // Eðer bir texture seçildiyse, tüm materyallerin ana texture'ýný güncelleyin
+        if (selectedTexture != null)
+        {
+            foreach (Material mat in cardRenderer.materials)
+            {
+                mat.mainTexture = selectedTexture;
+            }
+        }
 
         // Kartýn içindeki UI öðelerini al
-        TextMeshProUGUI nameText = card.transform.Find("NameText").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI ratingText = card.transform.Find("RatingText").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI priceText = card.transform.Find("PriceText").GetComponent<TextMeshProUGUI>();
+        TextMeshPro nameText = card.transform.Find("NameText").GetComponent<TextMeshPro>();
+        TextMeshPro ratingText = card.transform.Find("RatingText").GetComponent<TextMeshPro>();
+        TextMeshPro priceText = card.transform.Find("PriceText").GetComponent<TextMeshPro>();
 
-        RawImage playerImage = card.transform.Find("FootballerImage").GetComponent<RawImage>();
-        RawImage countryFlagImage = card.transform.Find("CountryFlag").GetComponent<RawImage>();
-        RawImage teamLogoImage = card.transform.Find("TeamLogo").GetComponent<RawImage>();
+        // Footballer GameObject'inin içindeki RawImage'larý bulmak için tam yolu belirtin
+        Transform footballerObject = card.transform.Find("Footballer");
 
-        // UI öðelerine futbolcu bilgilerini aktar
-        nameText.text = footballer.name;
-        ratingText.text = footballer.rating.ToString();
-        priceText.text = FormatPrice(footballer.price);
-
-        // RawImage bileþenlerine Texture2D türündeki görselleri ata
-        if (footballer.footballerImage != null)
+        if (footballerObject != null)
         {
+            RawImage playerImage = footballerObject.Find("FootballerImage").GetComponent<RawImage>();
+            RawImage countryFlagImage = footballerObject.Find("CountryFlag").GetComponent<RawImage>();
+            RawImage teamLogoImage = footballerObject.Find("TeamLogo").GetComponent<RawImage>();
+
+            // UI öðelerine futbolcu bilgilerini aktar
+            nameText.text = footballer.name;
+            ratingText.text = footballer.rating.ToString();
+            priceText.text = FormatPrice(footballer.price);
+
+            // Texture2D öðelerini RawImage'lara aktar
             playerImage.texture = footballer.footballerImage;
-        }
-
-        if (footballer.countryFlag != null)
-        {
             countryFlagImage.texture = footballer.countryFlag;
-        }
-
-        if (footballer.teamLogo != null)
-        {
             teamLogoImage.texture = footballer.teamLogo;
         }
+        else
+        {
+            Debug.LogError("Footballer GameObject'i bulunamadý.");
+        }
 
-        StartCoroutine(FireworkEffect());
+        StartCoroutine(FireworkEffect(cardType));
 
         Debug.Log("Futbolcu Kartý Oluþturuldu: " + footballer.name);
     }
@@ -105,22 +146,56 @@ public class CardManager : MonoBehaviour
     {
         if (price >= 1000000)
         {
-            return (price / 1000000f).ToString("0.#") + "M€";
+            // Milyon formatý için
+            return (price / 1000000f).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + "M€";
         }
         else if (price >= 1000)
         {
-            return (price / 1000f).ToString("0.#") + "K€";
+            // Binlik format için
+            return (price / 1000f).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + "K€";
         }
         else
         {
+            // Bin altýndaki fiyatlar için
             return price.ToString() + "€";
         }
     }
 
-    IEnumerator FireworkEffect()
+    IEnumerator FireworkEffect(string cardType)
     {
-        yield return new WaitForSeconds(3);
-        fireWorkSystem.gameObject.SetActive(true);
+        yield return new WaitForSeconds(4);
+        if (cardType == "Bronze")
+        {
+            bronzeFireworkSystem.Play();
+        }
+        else if (cardType == "Silver")
+        {
+            silverFireworkSystem.Play();
+        }
+        else if (cardType == "Gold")
+        {
+            goldFireworkSystem.Play();
+        }
+        else
+        {
+            Debug.Log("Geçersiz Kart Türü!");
+        }
+    }
+
+    public void CloseThePackageOpenScreen()
+    {
+        bronzeFireworkSystem.Stop();
+        silverFireworkSystem.Stop();
+        goldFireworkSystem.Stop();
+    }
+
+    public void DestroyCard()
+    {
+        if (card != null)
+        {
+            Destroy(card);
+            card = null; // Referansý sýfýrlayýn
+        }
     }
 
 }
