@@ -6,7 +6,7 @@ public class CardTouchSystem : MonoBehaviour
 {
     private Vector3 initialRotation;
     private Vector3 lastMousePosition;
-    [SerializeField] float rotationSpeed = 2f; // Döndürme hassasiyeti
+    [SerializeField] float rotationSpeed = 1f; // Döndürme hassasiyeti
 
     private void Start()
     {

@@ -40,11 +40,14 @@ public class MenuManager : MonoBehaviour
         PlayerPrefs.DeleteKey("username");
 
         // mypackages.json dosyasýný sil
-        string filePath = Path.Combine(Application.persistentDataPath, "mypackages.json");
-        if (File.Exists(filePath))
+        string myPackagesFilePath = Path.Combine(Application.persistentDataPath, "mypackages.json");
+        string myFootballersFilePath = Path.Combine(Application.persistentDataPath, "myfootballers.json");
+        if (File.Exists(myPackagesFilePath) && File.Exists(myFootballersFilePath))
         {
-            File.Delete(filePath);
-            Debug.Log("mypackages.json dosyasý silindi.");
+            File.Delete(myPackagesFilePath);
+            File.Delete(myFootballersFilePath);
+
+            Debug.Log("mypackages.json ve myfootballers.json dosyalarý silindi, kullanýcý oturumu sýfýrlandý.");
         }
         else
         {
@@ -58,5 +61,10 @@ public class MenuManager : MonoBehaviour
     public void GoToShopScene()
     {
         SceneManager.LoadScene(2);
+    }
+
+    public void GoToFootballersScene()
+    {
+        SceneManager.LoadScene(3);
     }
 }

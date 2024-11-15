@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.IO;
 
 public class CardManager : MonoBehaviour
 {
@@ -137,9 +138,76 @@ public class CardManager : MonoBehaviour
             Debug.LogError("Footballer GameObject'i bulunamadý.");
         }
 
-        StartCoroutine(FireworkEffect(cardType));
+        SaveFootballersInfo(cardType);
+
+        FireworkEffect(cardType);
 
         Debug.Log("Futbolcu Kartý Oluþturuldu: " + footballer.name);
+    }
+
+    void SaveFootballersInfo(string packageType)
+    {
+        // Kartýn içindeki UI öðelerini al
+        TextMeshPro nameText = card.transform.Find("NameText").GetComponent<TextMeshPro>();
+        TextMeshPro ratingText = card.transform.Find("RatingText").GetComponent<TextMeshPro>();
+        TextMeshPro priceText = card.transform.Find("PriceText").GetComponent<TextMeshPro>();
+
+        Transform footballerObject = card.transform.Find("Footballer");
+
+        if (footballerObject != null)
+        {
+            RawImage playerImage = footballerObject.Find("FootballerImage").GetComponent<RawImage>();
+            RawImage countryFlagImage = footballerObject.Find("CountryFlag").GetComponent<RawImage>();
+            RawImage teamLogoImage = footballerObject.Find("TeamLogo").GetComponent<RawImage>();
+
+            // Futbolcu bilgilerini bir FootballerInfo nesnesine kaydet
+            FootballerInfo newFootballerInfo = new FootballerInfo
+            {
+                name = nameText.text,
+                rating = ratingText.text,
+                price = priceText.text,
+                playerImageName = playerImage.texture.name,
+                countryFlagImageName = countryFlagImage.texture.name,
+                teamLogoImageName = teamLogoImage.texture.name,
+                packageType = packageType, // Paket türünü kaydediyoruz
+                footballerCount = 1 // Yeni futbolcu için baþlangýç deðeri
+            };
+
+            string filePath = Path.Combine(Application.persistentDataPath, "myfootballers.json");
+
+            // Mevcut futbolcularýn listesini yükle
+            List<FootballerInfo> footballersList = new List<FootballerInfo>();
+            if (File.Exists(filePath))
+            {
+                string existingJson = File.ReadAllText(filePath);
+                footballersList = JsonUtility.FromJson<FootballerInfoList>(existingJson)?.footballers ?? new List<FootballerInfo>();
+            }
+
+            // Ayný futbolcu var mý kontrol et
+            FootballerInfo existingFootballer = footballersList.Find(f => f.name == newFootballerInfo.name);
+
+            if (existingFootballer != null)
+            {
+                // Eðer ayný futbolcu varsa, count deðerini artýr
+                existingFootballer.footballerCount++;
+            }
+            else
+            {
+                // Eðer yeni bir futbolcuysa listeye ekle
+                footballersList.Add(newFootballerInfo);
+            }
+
+            // Güncellenmiþ listeyi tekrar JSON formatýna çevirip dosyaya kaydet
+            FootballerInfoList footballerInfoList = new FootballerInfoList { footballers = footballersList };
+            string updatedJson = JsonUtility.ToJson(footballerInfoList, true);
+            File.WriteAllText(filePath, updatedJson);
+
+            Debug.Log($"Futbolcu bilgileri kaydedildi: {newFootballerInfo.name} - Paket Türü: {newFootballerInfo.packageType}");
+        }
+        else
+        {
+            Debug.LogError("Footballer GameObject'i bulunamadý.");
+        }
     }
 
     string FormatPrice(int price)
@@ -161,9 +229,8 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    IEnumerator FireworkEffect(string cardType)
+    public void FireworkEffect(string cardType)
     {
-        yield return new WaitForSeconds(4);
         if (cardType == "Bronze")
         {
             bronzeFireworkSystem.Play();
@@ -194,8 +261,31 @@ public class CardManager : MonoBehaviour
         if (card != null)
         {
             Destroy(card);
+
+            PlayerPrefs.DeleteKey("OpenAnimSkip");
+
             card = null; // Referansý sýfýrlayýn
         }
     }
 
+}
+
+[System.Serializable]
+public class FootballerInfo
+{
+    public string name;
+    public string rating;
+    public string price;
+    public string playerImageName;
+    public string countryFlagImageName;
+    public string teamLogoImageName;
+    public int footballerCount;
+    public string packageType; // Yeni eklenen alan
+}
+
+// Futbolcu listesini JSON formatýnda tutmak için sýnýf
+[System.Serializable]
+public class FootballerInfoList
+{
+    public List<FootballerInfo> footballers;
 }

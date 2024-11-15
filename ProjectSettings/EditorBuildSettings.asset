@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ShopScene.unity
     guid: 4af2bc512cb2c684886a1e488db9cc3e
+  - enabled: 1
+    path: Assets/Scenes/MyFootballers.unity
+    guid: c745e564b9b9fa348849ab0450f5571e
   m_configObjects: {}

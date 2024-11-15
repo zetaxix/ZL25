@@ -106,10 +106,11 @@ public class MyPackages : MonoBehaviour
                                         // Hangi paketin açýldýðýný CardManager'a gönder
                                         cardManager.SetPackageType(package.name);
 
-                                        // Sayý sýfýr olduðunda butonu devre dýþý býrak
+                                        // Sayý sýfýr olduðunda butonu devre dýþý býrak ve prefab'ý kaldýr
                                         if (package.count == 0)
                                         {
                                             packageButton.interactable = false;
+                                            Destroy(instantiatedPackage);  // Paket prefab'ýný ekrandan kaldýr
                                         }
 
                                         // JSON dosyasýný güncelle ve kaydet
