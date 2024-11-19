@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class SoundEffectManager : MonoBehaviour
 {
-    public AudioClip fadeSoundEffect; // Ses efekti dosyasý
-    public AudioClip fireworkSoundEffect; // Ses efekti dosyasý
+    public AudioClip sound; // Ses efekti dosyasý
     private AudioSource audioSource;
 
     void Start()
@@ -14,22 +13,16 @@ public class SoundEffectManager : MonoBehaviour
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
+
+        //PlaySoundEffect();
     }
 
     // Animation Event'in çaðýracaðý ses oynatma fonksiyonu
     public void PlaySoundEffect()
     {
-        if (fadeSoundEffect != null && audioSource != null)
+        if (sound != null)
         {
-            audioSource.PlayOneShot(fadeSoundEffect);
-        }
-    }
-
-    public void PlayFireworkSound()
-    {
-        if (fireworkSoundEffect != null && audioSource != null)
-        {
-            audioSource.PlayOneShot(fireworkSoundEffect);
+            audioSource.PlayOneShot(sound);
         }
     }
 }

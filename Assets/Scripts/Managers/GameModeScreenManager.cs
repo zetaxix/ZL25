@@ -41,6 +41,8 @@ public class GameModeScreenManager : MonoBehaviour
 
     [SerializeField] GameObject BackToModeScreen;
 
+    [SerializeField] Button contunieMatchButton;
+
     void AddOpponentNames()
     {
         // Rakip kullanýcý adlarýný gerçekçi ve global futbol temalý olarak ekle
@@ -94,6 +96,11 @@ FreekickHero";
 
         //Random rakip isimlerini belirle
         AddOpponentNames();
+
+        contunieMatchButton.onClick.AddListener(() => {
+
+            ContunieToMatch();
+        });
     }
 
     private void UpdateUI()
@@ -101,10 +108,10 @@ FreekickHero";
         chooseNumber.text = $"{choseNum} / {maxSelections}";
         if (choseNum == maxSelections)
         {
-            continueButton.gameObject.SetActive(true);
+            contunieMatchButton.gameObject.SetActive(true);
         } else
         {
-            continueButton.gameObject.SetActive(false);
+            contunieMatchButton.gameObject.SetActive(false);
         }
     }
 
@@ -229,8 +236,6 @@ FreekickHero";
 
             StartCoroutine(ChooseRandomOpponentUsername());
 
-            // Kart seçimlerini sýfýrla
-            ResetCardSelections();
         }
         else
         {
@@ -243,7 +248,8 @@ FreekickHero";
     public void CancelMatching()
     {
         StopAllCoroutines(); // Tüm coroutine'leri durdur
-        StopMatchTimer(); // Timer'ý durdur
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     IEnumerator ChooseRandomOpponentUsername()
@@ -273,28 +279,6 @@ FreekickHero";
         yield return new WaitForSeconds(2);
 
         SceneManager.LoadScene(5);
-    }
-
-    public void ResetCardSelections()
-    {
-        foreach (Transform child in footballersParent)
-        {
-            // Her bir kartýn varsayýlan durumunu ayarla
-            GameObject card = child.gameObject;
-            RawImage cardBackground = card.GetComponent<RawImage>();
-            Button cardSelectButton = card.transform.Find("SelectButton").GetComponent<Button>();
-
-            Color defaultColor = Color.white; // Varsayýlan arka plan rengi
-            cardBackground.color = defaultColor;
-
-            // Kartýn seçili durumunu sýfýrla
-            bool isSelected = false;
-            cardSelectButton.onClick.RemoveAllListeners(); // Önceki dinleyicileri temizle
-        }
-
-        choseNum = 0; // Seçim sayýsýný sýfýrla
-        chosenFootballers.Clear(); // Seçilen oyuncular listesini temizle
-        UpdateUI(); // UI'yi güncelle
     }
 
     #endregion

@@ -7,6 +7,8 @@ public class CardTouchSystem : MonoBehaviour
     private Vector3 initialRotation;
     private Vector3 lastMousePosition;
     [SerializeField] float rotationSpeed = 1f; // Döndürme hassasiyeti
+    [SerializeField] float minVerticalAngle = -10f; // Yukarý hareket sýnýrý
+    [SerializeField] float maxVerticalAngle = 10f;  // Aþaðý hareket sýnýrý
 
     private void Start()
     {
@@ -15,11 +17,11 @@ public class CardTouchSystem : MonoBehaviour
 
     private void Update()
     {
-        #if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE
         HandleMouseRotation();
-        #elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID || UNITY_IOS
         HandleTouchRotation();
-        #endif
+#endif
     }
 
     void HandleMouseRotation()
@@ -36,8 +38,17 @@ public class CardTouchSystem : MonoBehaviour
             float rotX = delta.y * rotationSpeed; // Y ekseni için dikey hareketi alýr
             float rotY = -delta.x * rotationSpeed; // X ekseni için yatay hareketi alýr
 
-            transform.Rotate(Vector3.up, rotY, Space.World);  // Y ekseninde dünya çapýnda döndür
-            transform.Rotate(Vector3.right, rotX, Space.World); // X ekseninde dünya çapýnda döndür
+            // Yan döndürme (Y ekseni - serbest)
+            transform.Rotate(Vector3.up, rotY, Space.World);
+
+            // Yukarý döndürme (X ekseni - sýnýrlý)
+            float newXRotation = transform.eulerAngles.x + rotX;
+
+            // Eðim sýnýrlarýný uygula
+            newXRotation = ClampAngle(newXRotation, minVerticalAngle, maxVerticalAngle);
+
+            Vector3 clampedRotation = new Vector3(newXRotation, transform.eulerAngles.y, transform.eulerAngles.z);
+            transform.eulerAngles = clampedRotation;
         }
     }
 
@@ -54,8 +65,17 @@ public class CardTouchSystem : MonoBehaviour
                 float rotX = delta.y * rotationSpeed * Time.deltaTime;
                 float rotY = -delta.x * rotationSpeed * Time.deltaTime;
 
-                transform.Rotate(Vector3.up, rotY, Space.World);  // Y ekseninde dünya çapýnda döndür
-                transform.Rotate(Vector3.right, rotX, Space.World); // X ekseninde dünya çapýnda döndür
+                // Yan döndürme (Y ekseni - serbest)
+                transform.Rotate(Vector3.up, rotY, Space.World);
+
+                // Yukarý döndürme (X ekseni - sýnýrlý)
+                float newXRotation = transform.eulerAngles.x + rotX;
+
+                // Eðim sýnýrlarýný uygula
+                newXRotation = ClampAngle(newXRotation, minVerticalAngle, maxVerticalAngle);
+
+                Vector3 clampedRotation = new Vector3(newXRotation, transform.eulerAngles.y, transform.eulerAngles.z);
+                transform.eulerAngles = clampedRotation;
             }
         }
     }
@@ -65,5 +85,13 @@ public class CardTouchSystem : MonoBehaviour
         Animator animator = GetComponent<Animator>();
 
         animator.enabled = false;
+    }
+
+    // Açýyý -180 ile 180 arasýnda sýnýrlandýrma
+    private float ClampAngle(float angle, float min, float max)
+    {
+        if (angle > 180f) angle -= 360f;
+        if (angle < -180f) angle += 360f;
+        return Mathf.Clamp(angle, min, max);
     }
 }

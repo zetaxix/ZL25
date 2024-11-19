@@ -1,38 +1,40 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine;
 
 public class KaliteKazanirManager : MonoBehaviour
 {
     [Header("Packages Textures")]
-    [SerializeField] Texture2D BronzePackage;
-    [SerializeField] Texture2D SilverPackage;
-    [SerializeField] Texture2D GoldPackage;
+    [SerializeField] private Texture2D BronzePackage;
+    [SerializeField] private Texture2D SilverPackage;
+    [SerializeField] private Texture2D GoldPackage;
 
-    [SerializeField] TextMeshProUGUI opponentText;
-    [SerializeField] TextMeshProUGUI usernameText;
+    [Header("User Cards")]
+    [SerializeField] private GameObject userCardPrefab;  // Kart prefab'ýný buraya alýyoruz
+    [SerializeField] private Transform userCardsParent;  // Kartlarýn yerleþtirileceði ana obje
 
-    [Header("Footballer Card Setting")]
-    [SerializeField] private GameObject footballerCardPrefab; // Kart prefabý
-    [SerializeField] private Transform footballersParent; // Grid Layout Group içeren parent objesi
+    [Header("Grid Settings")]
+    [SerializeField] float xSpacing;
+    [SerializeField] float zSpacing;
+    [SerializeField] int columns;
 
-    // Json veri çekme ve veri kaydetmek için kullanýlan deðiþkenler
+    [Header("Text Settings")]
+    [SerializeField] TextMeshPro usernameText;
+    [SerializeField] TextMeshPro opponentUsernameText;
+
     private string jsonFilePath;
 
     private void Awake()
     {
-        opponentText.text = PlayerPrefs.GetString("opponentUsername");
         usernameText.text = PlayerPrefs.GetString("username");
+        opponentUsernameText.text = PlayerPrefs.GetString("opponentUsername");
     }
 
     private void Start()
     {
         jsonFilePath = Path.Combine(Application.persistentDataPath, "chosenfootballers.json");
-
-
         LoadAndDisplayFootballers();
     }
 
@@ -49,10 +51,8 @@ public class KaliteKazanirManager : MonoBehaviour
 
         if (footballerInfoList != null && footballerInfoList.footballers.Count > 0)
         {
-            foreach (FootballerInfo footballer in footballerInfoList.footballers)
-            {
-                CreateFootballerCard(footballer);
-            }
+            // Kartlarý grid düzeninde yerleþtir
+            CreateGridWithEmptyParent(footballerInfoList.footballers);
         }
         else
         {
@@ -60,68 +60,107 @@ public class KaliteKazanirManager : MonoBehaviour
         }
     }
 
-    private void CreateFootballerCard(FootballerInfo footballer)
+    private void CreateGridWithEmptyParent(List<FootballerInfo> footballers)
     {
-        GameObject card = Instantiate(footballerCardPrefab, footballersParent);
+        GameObject parent = new GameObject("GridParent");
+        parent.transform.SetParent(userCardsParent); // Kartlar ana objenin altýnda olacak
 
-        // Kartýn içindeki UI öðelerine ulaþ
-        TextMeshProUGUI nameText = card.transform.Find("NameText").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI ratingText = card.transform.Find("RatingText").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI priceText = card.transform.Find("PriceText").GetComponent<TextMeshProUGUI>();
-        RawImage cardBackground = card.GetComponent<RawImage>(); // Kartýn arka planý
+        // Kart prefab'ýnýn yerel (local) konumunu ve rotasýný alýn
+        Vector3 prefabPosition = userCardPrefab.transform.localPosition;
+        Quaternion prefabRotation = userCardPrefab.transform.localRotation;
 
-        RawImage playerImage = card.transform.Find("FootballerImage").GetComponent<RawImage>();
-        RawImage countryFlagImage = card.transform.Find("CountryFlag").GetComponent<RawImage>();
-        RawImage teamLogoImage = card.transform.Find("TeamLogo").GetComponent<RawImage>();
-
-        Button cardSelectButton = card.transform.Find("SelectButton").GetComponent<Button>();
-
-        // UI öðelerini doldur
-        nameText.text = footballer.name;
-        ratingText.text = footballer.rating;
-        priceText.text = footballer.price;
-
-        // Kartýn seçimi için gerekli parametreler
-        bool isSelected = false; // Bu kart seçili mi?
-        Color selectedColor = Color.green; // Seçim rengi
-        Color defaultColor = Color.white; // Varsayýlan renk
-
-        // Paket türüne göre arka plan dokusunu ayarla
-        switch (footballer.packageType)
+        // Kartlarý serbest bir þekilde yerleþtirmek için pozisyon hesapla
+        for (int i = 0; i < footballers.Count; i++)
         {
-            case "Bronze":
-                cardBackground.texture = BronzePackage;
-                break;
-            case "Silver":
-                cardBackground.texture = SilverPackage;
-                break;
-            case "Gold":
-                cardBackground.texture = GoldPackage;
-                break;
-            default:
-                cardBackground.color = defaultColor; // Varsayýlan renk
-                break;
+            int row = i / columns;  // Satýr hesaplama
+            int column = i % columns;  // Sütun hesaplama
+
+            // Kartlarýn pozisyonunu prefab konumuna göre ayarlayýn
+            Vector3 localPosition = new Vector3(column * xSpacing, 0, row * zSpacing);
+
+            // Kartlarý yerleþtirirken prefab'ýn yerel konumunu ve dönüþünü kullanýyoruz
+            Vector3 position = prefabPosition + localPosition;
+
+            // Kartý oluþtur ve konumlandýr, dönüþü de kullan
+            GameObject card = Instantiate(userCardPrefab, position, prefabRotation, parent.transform);
+
+            ShowFootballerIn3D(card, footballers[i]); // Kart bilgilerini 3D'ye aktar
+        }
+    }
+
+    private void ShowFootballerIn3D(GameObject card, FootballerInfo footballer)
+    {
+        // Kartýn içindeki UI öðelerini al
+        TextMeshPro nameText = card.transform.Find("NameText").GetComponent<TextMeshPro>();
+        TextMeshPro ratingText = card.transform.Find("RatingText").GetComponent<TextMeshPro>();
+        TextMeshPro priceText = card.transform.Find("PriceText").GetComponent<TextMeshPro>();
+
+        // Card'daki renderer bileþenine ulaþýn
+        Renderer cardRenderer = card.GetComponent<Renderer>();
+        if (cardRenderer == null)
+        {
+            Debug.LogError("Kart üzerinde Renderer bileþeni bulunamadý.");
+            return;
         }
 
-        // Oyuncunun kartlarýnýn görsellerini yükleme
-        playerImage.texture = TextureCache.Instance.LoadTexture("MyRepository/FootballerPhotos", footballer.playerImageName);
-        countryFlagImage.texture = TextureCache.Instance.LoadTexture("MyRepository/CountryPhotos", footballer.countryFlagImageName);
-        teamLogoImage.texture = TextureCache.Instance.LoadTexture("MyRepository/TeamPhotos", footballer.teamLogoImageName);
-
-        // Kart seçimini yönet
-        cardSelectButton.onClick.AddListener(() =>
+        // Deðiþtirilecek texture'ý belirleyin
+        Texture2D selectedTexture = null;
+        if (footballer.packageType == "Bronze")
         {
-            if (!isSelected)
-            {
-                Debug.Log($"{footballer.name} choosed!");
-                isSelected = true;
-            }
-            else if (isSelected)
-            {
-                Debug.Log($"{footballer.name} unchoosed!");
-                isSelected= false;
-            }
+            selectedTexture = BronzePackage;
+        }
+        else if (footballer.packageType == "Silver")
+        {
+            selectedTexture = SilverPackage;
+        }
+        else if (footballer.packageType == "Gold")
+        {
+            selectedTexture = GoldPackage;
+        }
 
-        });
+        // Eðer bir texture seçildiyse, tüm materyallerin ana texture'ýný güncelleyin
+        if (selectedTexture != null)
+        {
+            foreach (Material mat in cardRenderer.materials)
+            {
+                mat.mainTexture = selectedTexture;
+            }
+        }
+
+        // Footballer GameObject'inin içindeki RawImage'larý bulmak için tam yolu belirtin
+        Transform footballerObject = card.transform.Find("Footballer");
+
+        if (footballerObject != null)
+        {
+            RawImage playerImage = footballerObject.Find("FootballerImage").GetComponent<RawImage>();
+            RawImage countryFlagImage = footballerObject.Find("CountryFlag").GetComponent<RawImage>();
+            RawImage teamLogoImage = footballerObject.Find("TeamLogo").GetComponent<RawImage>();
+
+            // UI öðelerine futbolcu bilgilerini aktar
+            nameText.text = footballer.name;
+            ratingText.text = footballer.rating.ToString();
+            priceText.text = footballer.price;
+
+            // Oyuncunun kartlarýnýn görsellerini yükleme
+            playerImage.texture = TextureCache.Instance.LoadTexture("MyRepository/FootballerPhotos", footballer.playerImageName);
+            countryFlagImage.texture = TextureCache.Instance.LoadTexture("MyRepository/CountryPhotos", footballer.countryFlagImageName);
+            teamLogoImage.texture = TextureCache.Instance.LoadTexture("MyRepository/TeamPhotos", footballer.teamLogoImageName);
+
+            Transform canvas = card.transform.Find("Canvas");
+
+            if (canvas != null)
+            {
+                Button cardButton = canvas.Find("Button").GetComponent<Button>();
+
+                cardButton.onClick.AddListener(() =>
+                {
+                    Debug.Log(footballer.name);
+                });
+            }
+        }
+        else
+        {
+            Debug.LogError("Footballer GameObject'i bulunamadý.");
+        }
     }
 }
