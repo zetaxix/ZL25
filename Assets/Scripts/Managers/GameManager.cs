@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,46 +13,118 @@ public class GameManager : MonoBehaviour
     private int userScore = 0;      // Kullanýcý skoru
     private int opponentScore = 0; // Rakip skoru
 
+    [Header("Cards Objects")]
+    [SerializeField] GameObject UserCards;
+    [SerializeField] GameObject OpponentCards;
+
+    [Header("Match Finish Screen Settings")]
+    [SerializeField] GameObject MatchFinishScreen;
+    [SerializeField] TextMeshPro matchStatusText;
+    [SerializeField] TextMeshProUGUI matchButton;
+
+    [Header("Card Stole And Save Screen")]
+    [SerializeField] GameObject CardStoleAndSaveScreen;
+    [SerializeField] TextMeshPro TitleStatus;
+    [SerializeField] TextMeshPro MatchFinishStatus;
+    [SerializeField] TextMeshPro ResultButton;
+
+    private bool matchFinish = false;    // Maçýn bitip bitmediðini gösterir
+    private bool matchStatusChecked = false; // Maç durumu bir kez kontrol edildi mi?
+
     void Awake()
     {
-        // instance boþsa bu scripti ata
         if (Instance == null)
         {
             Instance = this;
         }
         else if (Instance != this)
         {
-            Destroy(gameObject); // Eðer baþka bir Instance varsa onu yok et
+            Destroy(gameObject);
         }
     }
 
     private void Update()
     {
-        if (userScore == 3)
+        if (!matchStatusChecked && (userScore == 3 || opponentScore == 3))
         {
-            Debug.Log($"Maç Bitti {PlayerPrefs.GetString("username")} Kazandý!!");
-
-            CardMovement.instance.LockAllCards();
-            CardMovement.instance.cardAreaElements.SetActive(false);
-        }
-        else if (opponentScore == 3)
-        {
-            Debug.Log($"Maç Bitti {PlayerPrefs.GetString("opponentUsername")} Kazandý!!");
-            
-            CardMovement.instance.LockAllCards();
-            CardMovement.instance.cardAreaElements.SetActive(false);
+            matchFinish = true;
+            MatchStatusCheck();
         }
     }
 
+    private void MatchStatusCheck()
+    {
+        if (matchFinish && !matchStatusChecked)
+        {
+            matchStatusChecked = true; // Fonksiyonun bir daha çalýþmamasýný saðlar.
+
+            Debug.Log($"Maç Bitti! {PlayerPrefs.GetString("username")} kazandý!!");
+
+            CardMovement.instance.LockAllCards();
+            CardMovement.instance.cardAreaElements.SetActive(false);
+
+            GameObject trueUserCard = UserCards.transform.Find("GridParent").gameObject;
+
+            trueUserCard.SetActive(false);
+            OpponentCards.SetActive(false);
+
+            MatchFinishScreen.SetActive(true);
+
+            if (userScore == 3)
+            {
+                matchStatusText.text = "Maçý Kazandýn!";
+                matchButton.text = "Kart Çalmaya Geç =>";
+
+                PlayerPrefs.SetString("WhoWin", "UserWin");
+            }
+            else if (opponentScore == 3)
+            {
+                matchStatusText.text = "Maçý Kaybettin!";
+                matchButton.text = "Kart Korumaya Geç =>";
+
+                PlayerPrefs.SetString("WhoWin", "OpponentWin");
+
+                KaliteKazanirManager.Instance.LoadAndDisplayFootballers();
+            }
+        }
+    }
+
+    public void GoToStoleorSaveScreen()
+    {
+        if (PlayerPrefs.GetString("WhoWin") == "UserWin")
+        {
+            CardStoleAndSaveScreen.SetActive(true);
+            MatchFinishScreen.SetActive(false);
+
+            TitleStatus.text = "Kart Çalma";
+            MatchFinishStatus.text = "Çalmak istediðiniz 3 tane kartý seçin ve sonuca geçin.";
+
+            GameScreenOpponentCardManager.Instance.StartShowOpponentCards();
+
+        }
+        else if (PlayerPrefs.GetString("WhoWin") == "OpponentWin")
+        {
+            CardStoleAndSaveScreen.SetActive(true);
+            MatchFinishScreen.SetActive(false);
+
+            TitleStatus.text = "Kart Koruma";
+            MatchFinishStatus.text = "Korumak istediðiniz 3 tane kartý seçin ve sonuca geçin.";
+
+            KaliteKazanirManager.Instance.LoadAndDisplayFootballers();
+
+        }
+    }   
     public IEnumerator CompareAndAddScore()
     {
+        yield return new WaitForSeconds(CardMovement.instance.randTime + 1.10f);
+
         // Kullanýcý ve rakip puanlarýný al
         int userRating = int.Parse(UserFootballerRating());
         int opponentRating = int.Parse(OpponentFootballerRating());
 
         Debug.Log($"User Rating: {userRating}, Opponent Rating: {opponentRating}");
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1.5f);
 
         // Skorlarý karþýlaþtýr ve ekle
         if (userRating > opponentRating)
@@ -152,6 +225,11 @@ public class GameManager : MonoBehaviour
             return "0";
         }
 
-        return GameScreenOpponentCardManager.Instance.randSelectFootballer.rating;
+        return GameScreenOpponentCardManager.Instance.randomFootballer.rating;
+    }
+
+    public void UserGoToMenu()
+    {
+        SceneManager.LoadScene(1);
     }
 }

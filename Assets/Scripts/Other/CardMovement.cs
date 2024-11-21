@@ -25,6 +25,7 @@ public class CardMovement : MonoBehaviour
     [SerializeField] Transform opponentCards;
 
     private int cardIndex = 1;  // Ýlk kart olan 3DCardForGameScreen1'den baþlar
+    public int randTime;
 
     void Awake()
     {
@@ -124,14 +125,22 @@ public class CardMovement : MonoBehaviour
                             Debug.LogError("OpponentCards objesi bulunamadý.");
                         }
 
-                        GameScreenOpponentCardManager.Instance.GenerateandShowOpponentCard();
-                        Opponent3DStartAnim.instance.StartAnim();
+                        StartCoroutine(GenerateOpponentCardandDelay());
 
                         StartCoroutine(GameManager.Instance.CompareAndAddScore());
                     }
                 }
             }
         }
+    }
+
+    public IEnumerator GenerateOpponentCardandDelay()
+    {
+        randTime = Random.Range(1, 4);
+
+        yield return new WaitForSeconds(randTime);
+        GameScreenOpponentCardManager.Instance.GenerateandShowOpponentCard();
+        Opponent3DStartAnim.instance.StartAnim();
     }
 
     //Tüm kartlarý kilitle

@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class KaliteKazanirManager : MonoBehaviour
 {
+    public static KaliteKazanirManager Instance;
+
     [Header("Packages Textures")]
     [SerializeField] private Texture2D BronzePackage;
     [SerializeField] private Texture2D SilverPackage;
@@ -28,6 +30,14 @@ public class KaliteKazanirManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        } else if (Instance != null)
+        {
+            Destroy(gameObject);
+        }
+
         usernameText.text = PlayerPrefs.GetString("username");
         opponentUsernameText.text = PlayerPrefs.GetString("opponentUsername");
     }
@@ -38,7 +48,7 @@ public class KaliteKazanirManager : MonoBehaviour
         LoadAndDisplayFootballers();
     }
 
-    private void LoadAndDisplayFootballers()
+    public void LoadAndDisplayFootballers()
     {
         if (!File.Exists(jsonFilePath))
         {
