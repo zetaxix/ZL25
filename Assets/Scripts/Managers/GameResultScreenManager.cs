@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,8 @@ using UnityEngine.UIElements;
 
 public class GameResultScreenManager : MonoBehaviour
 {
+    public static GameResultScreenManager Instance;
+
     [Header("Card Prefab & Parent")]
     [SerializeField] private GameObject cardPrefab; // Kart prefab'ı
     [SerializeField] private Transform cardParent;  // Kartların yerleştirileceği parent
@@ -29,12 +32,47 @@ public class GameResultScreenManager : MonoBehaviour
 
     [SerializeField] GameObject menuButton;
 
+    [SerializeField] TextMeshPro resultScreenUptext;
+    [SerializeField] TextMeshPro resultScreenLowtext;
+
     private string filePath;
+    string whoWin;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        } else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
+
+    }
 
     void Start()
     {
         // JSON dosyasının yolunu belirle
         filePath = Path.Combine(Application.persistentDataPath, "stoleCards.json");
+
+        whoWin = PlayerPrefs.GetString("WhoWin");
+
+        if (whoWin == "UserWin")
+        {
+            // KULLANICI KAZANDI, KULLANICI KARTLARI ÇALACAK, BİLGİSAYARA KORUMAYA ÇALIŞACAK.
+
+            resultScreenUptext.text = "Rakibin Koruduğu Kartlar";
+            resultScreenLowtext.text = "Çaldığın Kartlar";
+
+        }
+        else if (whoWin == "OpponentWin")
+        {
+            // BİLGİSAYAR KAZANDI, BİLGİSAYAR KARTLARI ÇALACAK, KULLANICI KORUMAYA ÇALIŞACAK.
+
+            resultScreenUptext.text = "Rakibin Çalmak İstediği Kartlar";
+            resultScreenLowtext.text = "Koruduğun Kartlar";
+
+        }
     }
 
     #region Bilgisayarın Koruduğu Kartları Göster
@@ -83,7 +121,7 @@ public class GameResultScreenManager : MonoBehaviour
             yield break;
         }
 
-        #region Kartların Kontrol Edilip Arkaplanın Yeşil ya da Kırmızı Olması
+        #region Kartların Kontrol Edilip Arkaplanın Kırmızı Olması
 
         // Kartları ProtectedGridParent altında sırayla al ve animasyonu tetikle
         for (int i = 0; i < protectedFootballerList.footballers.Count; i++)
@@ -389,7 +427,17 @@ public class GameResultScreenManager : MonoBehaviour
         if (priceTextTransform != null)
         {
             TextMeshPro priceText = priceTextTransform.GetComponent<TextMeshPro>();
-            if (priceText != null) priceText.text = FormatPrice(int.Parse(footballer.price));
+            whoWin = PlayerPrefs.GetString("WhoWin");
+
+            if (whoWin == "OpponentWin")
+            {
+                if (priceText != null) priceText.text = footballer.price;
+
+            }
+            else
+            {
+                if (priceText != null) priceText.text = FormatPrice(int.Parse(footballer.price));
+            }
         }
 
         // Görselleri yükleme
@@ -409,6 +457,178 @@ public class GameResultScreenManager : MonoBehaviour
 
     #endregion
 
+    #region Bilgisayarın Çalmak İstediği Kartlar
+
+    public void ShowAIStolenCards()
+    {
+        StartCoroutine( ShowAIStolenCardsWithAnimation() );
+    }
+
+    /// <summary>
+    /// Bilgisayarın çalmak istediği kartları JSON dosyasından okur ve grid şeklinde gösterir.
+    /// </summary>
+    private IEnumerator ShowAIStolenCardsWithAnimation()
+    {
+        // AI çaldığı kartların JSON dosyasını oku
+        string aiStoleCardFilePath = Path.Combine(Application.persistentDataPath, "AIStoleCards.json");
+
+        if (!File.Exists(aiStoleCardFilePath))
+        {
+            Debug.LogError($"Bilgisayarın çaldığı kartlar JSON dosyası bulunamadı: {aiStoleCardFilePath}");
+            yield break;
+        }
+
+        // Dosyadan JSON string okuma
+        string json = File.ReadAllText(aiStoleCardFilePath);
+
+        // JSON'u deserialize ederek listeye çevirme
+        FootballerInfoListWrapper aiStolenFootballerList = JsonUtility.FromJson<FootballerInfoListWrapper>(json);
+        if (aiStolenFootballerList == null || aiStolenFootballerList.footballers == null || aiStolenFootballerList.footballers.Count == 0)
+        {
+            Debug.LogError("JSON dosyasından geçerli çalınan futbolcu bilgisi alınamadı.");
+            yield break;
+        }
+
+        // Grid oluşturma
+        CreateAIProtectedCardsGrid(aiStolenFootballerList.footballers);
+
+        // Animasyonu tetikle
+        Transform stolenGridParent = cardParent.transform.Find("ProtectedGridParent");
+        if (stolenGridParent == null)
+        {
+            Debug.LogError("StolenGridParent bulunamadı.");
+            yield break;
+        }
+
+        // Animasyon sürecini simüle etmek için bekleme
+        yield return new WaitForSeconds(1.0f);
+
+        // Grid'i görünür hale getir
+        stolenGridParent.gameObject.SetActive(true);
+
+        HighlightAIStolenCards();
+
+        menuButton.SetActive(true);
+    }
+
+    private void HighlightAIStolenCards()
+    {
+        // Dosya yollarını belirle
+        string aiStoleCardFilePath = Path.Combine(Application.persistentDataPath, "AIStoleCards.json");
+        string userProtectedCardFilePath = Path.Combine(Application.persistentDataPath, "userProtectedCards.json");
+        string myFootballersFilePath = Path.Combine(Application.persistentDataPath, "myfootballers.json");
+
+        // Gerekli dosyaların mevcut olup olmadığını kontrol et
+        if (!File.Exists(aiStoleCardFilePath) || !File.Exists(userProtectedCardFilePath) || !File.Exists(myFootballersFilePath))
+        {
+            Debug.LogError("Gerekli JSON dosyalarından biri eksik.");
+            return;
+        }
+
+        // Dosyaları yükle ve parse et
+        FootballerInfoListWrapper aiStolenFootballers = LoadFootballersFromJson(aiStoleCardFilePath);
+        FootballerInfoListWrapper userProtectedFootballers = LoadFootballersFromJson(userProtectedCardFilePath);
+        FootballerInfoListWrapper myFootballers = LoadFootballersFromJson(myFootballersFilePath);
+
+        if (aiStolenFootballers == null || userProtectedFootballers == null || myFootballers == null)
+        {
+            Debug.LogError("JSON dosyalarından biri düzgün yüklenemedi.");
+            return;
+        }
+
+        // Görsel için kart grid'i bulun
+        Transform aiStolenGridParent = GameObject.Find("ResultGridParent")?.transform;
+        if (aiStolenGridParent == null)
+        {
+            Debug.LogError("AIStolenGridParent bulunamadı.");
+            return;
+        }
+
+        // AI'nın çalmak istediği kartlar üzerinde dön
+        for (int i = 0; i < aiStolenFootballers.footballers.Count; i++)
+        {
+            FootballerInfo aiStolenFootballer = aiStolenFootballers.footballers[i];
+            GameObject card = aiStolenGridParent.GetChild(i).gameObject;
+
+            // Kartın koruma durumunu kontrol et
+            bool isProtected = userProtectedFootballers.footballers.Exists(f => f.name == aiStolenFootballer.name);
+
+            // Görsel arkaplan rengi güncelle
+            UpdateCardBackground(card, isProtected);
+
+            if (!isProtected)
+            {
+                // Kart korunmuyorsa, kullanıcı listesinden sil
+                FootballerInfo footballerToRemove = myFootballers.footballers.FirstOrDefault(f => f.name == aiStolenFootballer.name);
+                if (footballerToRemove != null)
+                {
+                    myFootballers.footballers.Remove(footballerToRemove);
+                    Debug.Log($"Kart ismi: {aiStolenFootballer.name} - Kullanıcının kartlarından silindi.");
+                }
+            }
+            else
+            {
+                Debug.Log($"Kart ismi: {aiStolenFootballer.name} - Korunduğu için silinmedi.");
+            }
+        }
+
+        // Güncellenen kullanıcı listesini JSON dosyasına yeniden yaz
+        SaveFootballersToJson(myFootballersFilePath, myFootballers);
+        Debug.Log("Kullanıcının kartlar listesi güncellendi ve JSON dosyasına yazıldı.");
+    }
+
+    // JSON dosyasını yükleyen yardımcı fonksiyon
+    private FootballerInfoListWrapper LoadFootballersFromJson(string filePath)
+    {
+        try
+        {
+            string json = File.ReadAllText(filePath);
+            return JsonUtility.FromJson<FootballerInfoListWrapper>(json);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"JSON dosyası yüklenirken hata oluştu: {filePath}. Hata: {ex.Message}");
+            return null;
+        }
+    }
+
+    // JSON dosyasını kaydeden yardımcı fonksiyon
+    private void SaveFootballersToJson(string filePath, FootballerInfoListWrapper footballerList)
+    {
+        try
+        {
+            string json = JsonUtility.ToJson(footballerList, true); // Düzgün format için 'true'
+            File.WriteAllText(filePath, json);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"JSON dosyası kaydedilirken hata oluştu: {filePath}. Hata: {ex.Message}");
+        }
+    }
+
+    // Kartın arkaplan rengini güncelleyen yardımcı fonksiyon
+    private void UpdateCardBackground(GameObject card, bool isProtected)
+    {
+        Transform stoleImageBGTransform = card.transform.Find("Footballer/StoleImageBG");
+        if (stoleImageBGTransform != null)
+        {
+            RawImage stoleImageBG = stoleImageBGTransform.GetComponent<RawImage>();
+            if (stoleImageBG != null)
+            {
+                stoleImageBG.color = isProtected ? Color.green : Color.red;
+            }
+            else
+            {
+                Debug.LogError("StoleImageBG üzerinde RawImage bileşeni bulunamadı.");
+            }
+        }
+        else
+        {
+            Debug.LogError("Footballer/StoleImageBG bulunamadı.");
+        }
+    }
+
+    #endregion
 
     #region Oyucunun Çalmak istediği kartları Göster
 
@@ -416,7 +636,7 @@ public class GameResultScreenManager : MonoBehaviour
     /// <summary>
     /// JSON dosyasından futbolcuları okur ve grid şeklinde gösterir.
     /// </summary>
-    private void ShowStolenCards()
+    public void ShowUserStolenCards()
     {
         if (!File.Exists(filePath))
         {
@@ -529,7 +749,16 @@ public class GameResultScreenManager : MonoBehaviour
         if (priceTextTransform != null)
         {
             TextMeshPro priceText = priceTextTransform.GetComponent<TextMeshPro>();
-            if (priceText != null) priceText.text = FormatPrice(int.Parse(footballer.price));
+            whoWin = PlayerPrefs.GetString("WhoWin");
+
+            if (whoWin == "OpponentWin")
+            {
+                if (priceText != null) priceText.text = footballer.price;
+
+            }else
+            {
+                if (priceText != null) priceText.text = FormatPrice(int.Parse(footballer.price));
+            }
         }
 
         // Görselleri yükleme
@@ -542,9 +771,21 @@ public class GameResultScreenManager : MonoBehaviour
 
             GameObject StoleImagebg = footballerObject.Find("StoleImageBG").gameObject;
             GameObject StoleImageHand = footballerObject.Find("StoleHandImage").gameObject;
+            GameObject LockImage = footballerObject.Find("LockImage").gameObject;
 
-            StoleImagebg.SetActive(true);
-            StoleImageHand.SetActive(true);
+            whoWin = PlayerPrefs.GetString("WhoWin");
+
+            if (whoWin == "UserWin")
+            {
+                StoleImagebg.SetActive(true);
+                StoleImageHand.SetActive(true);
+
+            }
+            else if (whoWin == "OpponentWin")
+            {
+                StoleImagebg.SetActive(true);
+                LockImage.SetActive(true);
+            }
 
             // Görselleri FootballerInfo'dan alarak kartlara ekleme
             playerImage.texture = TextureCache.Instance.LoadTexture("MyRepository/FootballerPhotos", footballer.playerImageName);
@@ -555,6 +796,35 @@ public class GameResultScreenManager : MonoBehaviour
 
     #endregion
 
+    #region Oyuncunun Korumak istediği kartlar
+    public void ShowUserProtectedCards()
+    {
+        // userProtectedCards.json dosyasının yolunu belirleme
+        string userProtectedCardsFilePath = Path.Combine(Application.persistentDataPath, "userProtectedCards.json");
+
+        // Dosya mevcut mu kontrol et
+        if (!File.Exists(userProtectedCardsFilePath))
+        {
+            Debug.LogError($"JSON dosyası bulunamadı: {userProtectedCardsFilePath}");
+            return;
+        }
+
+        // Dosyadan JSON string okuma
+        string json = File.ReadAllText(userProtectedCardsFilePath);
+
+        // JSON'u deserialize ederek listeye çevirme
+        FootballerInfoListWrapper footballerList = JsonUtility.FromJson<FootballerInfoListWrapper>(json);
+        if (footballerList == null || footballerList.footballers == null || footballerList.footballers.Count == 0)
+        {
+            Debug.LogError("JSON dosyasından geçerli futbolcu bilgisi alınamadı.");
+            return;
+        }
+
+        // Korumak için seçilen kartların Grid'ini oluştur
+        CreateStolenCardsGrid(footballerList.footballers);
+    }
+    #endregion
+
     /// <summary>
     /// Fiyatları daha okunabilir bir biçimde biçimlendirir (örn. "1000000" → "1,000,000").
     /// </summary>
@@ -562,6 +832,7 @@ public class GameResultScreenManager : MonoBehaviour
     {
         return price.ToString("N0"); // Virgülle ayırarak biçimlendirme
     }
+
 }
 
 [System.Serializable]

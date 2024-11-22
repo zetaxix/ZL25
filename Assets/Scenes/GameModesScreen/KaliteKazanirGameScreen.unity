@@ -573,7 +573,7 @@ GameObject:
   - component: {fileID: 129226461}
   - component: {fileID: 129226460}
   m_Layer: 0
-  m_Name: UserStoleCards
+  m_Name: LowText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -595,7 +595,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.046, y: 0.05117476}
+  m_AnchoredPosition: {x: 0.059, y: 0.05117476}
   m_SizeDelta: {x: 0.305, y: 0.0919}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &129226460
@@ -1221,42 +1221,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 375655026}
-        m_TargetAssemblyTypeName: GameScreenOpponentCardManager, Assembly-CSharp
-        m_MethodName: SaveUserSelectedCardsToJson
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 375655026}
-        m_TargetAssemblyTypeName: GameScreenOpponentCardManager, Assembly-CSharp
-        m_MethodName: SaveAIProtectedCardsToJson
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 375655026}
-        m_TargetAssemblyTypeName: GameScreenOpponentCardManager, Assembly-CSharp
-        m_MethodName: HideOpponentGridParent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 909405835}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
@@ -1285,30 +1249,6 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1795388156}
-        m_TargetAssemblyTypeName: GameResultScreenManager, Assembly-CSharp
-        m_MethodName: ShowStolenCards
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1795388156}
-        m_TargetAssemblyTypeName: GameResultScreenManager, Assembly-CSharp
-        m_MethodName: ShowAICard
-        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1465,37 +1405,37 @@ MonoBehaviour:
     footballerCount: 0
     packageType: Gold
   - name: "Ya\u011F\u0131z Kars"
-    rating: 60
+    rating: 85
     price: 12500000
     playerImageName: lionelMessi
     countryFlagImageName: Turkey
     teamLogoImageName: Galatasaray
     footballerCount: 0
-    packageType: Bronze
+    packageType: Gold
   - name: Senem Kars
-    rating: 60
+    rating: 83
     price: 12500000
     playerImageName: lionelMessi
     countryFlagImageName: Turkey
     teamLogoImageName: Galatasaray
     footballerCount: 0
-    packageType: Bronze
+    packageType: Gold
   - name: "\xD6zay Kars"
-    rating: 60
+    rating: 75
     price: 12500000
     playerImageName: lionelMessi
     countryFlagImageName: Turkey
     teamLogoImageName: Galatasaray
     footballerCount: 0
-    packageType: Bronze
+    packageType: Silver
   - name: Murat Kars
-    rating: 60
+    rating: 70
     price: 1250000
     playerImageName: lionelMessi
     countryFlagImageName: Turkey
     teamLogoImageName: Galatasaray
     footballerCount: 0
-    packageType: Bronze
+    packageType: Silver
   randomFootballer:
     name: 
     rating: 
@@ -1553,6 +1493,8 @@ MonoBehaviour:
   columns: 7
   usernameText: {fileID: 441414258}
   opponentUsernameText: {fileID: 1792210696}
+  ForList3dopponentCardPrefab: {fileID: 8217580421666037598, guid: a7208ea1efd4a5d4d931c8fb7bdd0cb3, type: 3}
+  selectedColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!4 &410649323
 Transform:
   m_ObjectHideFlags: 0
@@ -2887,6 +2829,7 @@ Transform:
   - {fileID: 375655025}
   - {fileID: 1118847661}
   - {fileID: 1795388155}
+  - {fileID: 1829891150}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &981408750
@@ -3694,7 +3637,7 @@ GameObject:
   - component: {fileID: 1371140708}
   - component: {fileID: 1371140707}
   m_Layer: 0
-  m_Name: OpponentSaveCards
+  m_Name: UpText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3716,8 +3659,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.128, y: 0.05117476}
-  m_SizeDelta: {x: 0.485, y: 0.093}
+  m_AnchoredPosition: {x: 0.175, y: 0.05117476}
+  m_SizeDelta: {x: 0.5528, y: 0.093}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1371140707
 MonoBehaviour:
@@ -4856,6 +4799,8 @@ MonoBehaviour:
   zSpacing: 0.08
   columns: 3
   menuButton: {fileID: 2923356}
+  resultScreenUptext: {fileID: 1371140707}
+  resultScreenLowtext: {fileID: 129226460}
 --- !u!1 &1796565824
 GameObject:
   m_ObjectHideFlags: 0
@@ -5027,6 +4972,51 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1796565826}
   m_maskType: 0
+--- !u!1 &1829891149
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1829891150}
+  - component: {fileID: 1829891151}
+  m_Layer: 0
+  m_Name: ButtonManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1829891150
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1829891149}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.092880815, y: -0.0054571033, z: 0.14388943}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 955278725}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1829891151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1829891149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47b182ef89aca714db761724dd7db521, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resultButton: {fileID: 348635699}
 --- !u!1 &1872141153
 GameObject:
   m_ObjectHideFlags: 0

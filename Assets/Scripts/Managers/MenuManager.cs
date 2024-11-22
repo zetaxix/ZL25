@@ -43,19 +43,25 @@ public class MenuManager : MonoBehaviour
         // Kullanýcý adýný sil
         PlayerPrefs.DeleteKey("username");
 
-        // mypackages.json dosyasýný sil
-        string myPackagesFilePath = Path.Combine(Application.persistentDataPath, "mypackages.json");
-        string myFootballersFilePath = Path.Combine(Application.persistentDataPath, "myfootballers.json");
-        if (File.Exists(myPackagesFilePath) && File.Exists(myFootballersFilePath))
-        {
-            File.Delete(myPackagesFilePath);
-            File.Delete(myFootballersFilePath);
+        // Uygulamanýn kalýcý veri yolu altýndaki tüm .json dosyalarýný bul
+        string[] jsonFiles = Directory.GetFiles(Application.persistentDataPath, "*.json");
 
-            Debug.Log("mypackages.json ve myfootballers.json dosyalarý silindi, kullanýcý oturumu sýfýrlandý.");
+        foreach (string jsonFile in jsonFiles)
+        {
+            if (File.Exists(jsonFile))
+            {
+                File.Delete(jsonFile); // JSON dosyasýný sil
+                Debug.Log($"Silindi: {Path.GetFileName(jsonFile)}");
+            }
+        }
+
+        if (jsonFiles.Length == 0)
+        {
+            Debug.LogWarning("Hiçbir JSON dosyasý bulunamadý.");
         }
         else
         {
-            Debug.LogWarning("mypackages.json dosyasý bulunamadý.");
+            Debug.Log($"Toplam {jsonFiles.Length} JSON dosyasý silindi.");
         }
 
         // Ana sahneye dön

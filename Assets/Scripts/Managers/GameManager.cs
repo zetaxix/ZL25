@@ -84,7 +84,6 @@ public class GameManager : MonoBehaviour
 
                 PlayerPrefs.SetString("WhoWin", "OpponentWin");
 
-                KaliteKazanirManager.Instance.LoadAndDisplayFootballers();
             }
         }
     }
@@ -110,8 +109,7 @@ public class GameManager : MonoBehaviour
             TitleStatus.text = "Kart Koruma";
             MatchFinishStatus.text = "Korumak istediðiniz 3 tane kartý seçin ve sonuca geçin.";
 
-            KaliteKazanirManager.Instance.LoadAndDisplayFootballers();
-
+            KaliteKazanirManager.Instance.LoadAndDisplayFootballersForProtectedScreen();
         }
     }   
     public IEnumerator CompareAndAddScore()
@@ -182,6 +180,27 @@ public class GameManager : MonoBehaviour
                     Destroy(CardMovement.instance.rememberSelectedCard); // Kullanýcýnýn seçtiði kartý yok et
                     CardMovement.instance.rememberSelectedCard = null;  // Kart referansýný sýfýrla
                 }
+            }
+        }
+        else if (userRating == opponentRating)
+        {
+            // Kartlarý tekrar etkileþime aç
+            CardMovement.instance.UnLockAllCards();
+
+            // Rakip kart objesini al ve yok et
+            if (GameScreenOpponentCardManager.Instance.opponentCard != null)
+            {
+                GameObject opponentCardObject = GameScreenOpponentCardManager.Instance.opponentCard;
+                Destroy(opponentCardObject); // Rakip kartý yok et
+                GameScreenOpponentCardManager.Instance.opponentCard = null;
+            }
+
+            if (CardMovement.instance.rememberSelectedCard != null)
+            {
+                // Kartý yok etmeden önce listeden çýkar
+                CardMovement.instance.allCards.Remove(CardMovement.instance.rememberSelectedCard);
+                Destroy(CardMovement.instance.rememberSelectedCard); // Kullanýcýnýn seçtiði kartý yok et
+                CardMovement.instance.rememberSelectedCard = null;  // Kart referansýný sýfýrla
             }
         }
     }

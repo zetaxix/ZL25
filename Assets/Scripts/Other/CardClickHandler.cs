@@ -4,9 +4,23 @@ public class CardClickHandler : MonoBehaviour
 {
     private void OnMouseDown()
     {
-        if (GameScreenOpponentCardManager.Instance != null)
+        string whoWin = PlayerPrefs.GetString("WhoWin");
+
+        if (whoWin == "UserWin")
         {
-            GameScreenOpponentCardManager.Instance.ToggleCardSelection(gameObject);
+            if (GameScreenOpponentCardManager.Instance != null)
+            {
+                GameScreenOpponentCardManager.Instance.ToggleCardSelection(gameObject);
+            }
         }
+        else if (whoWin == "OpponentWin")
+        {
+            if (KaliteKazanirManager.Instance != null)
+            {
+                KaliteKazanirManager.Instance.ToggleCardSelection(gameObject);
+            }
+        }
+
+       
     }
 }
