@@ -20,6 +20,8 @@ public class MyPackages : MonoBehaviour
 
     [SerializeField] CardManager cardManager; // CardManager referansý
 
+    [SerializeField] GameObject cardContunieBtn;
+
     private void Awake()
     {
         myPackageButton.onClick.AddListener(() => { ShowUserPackages(); });
@@ -115,6 +117,9 @@ public class MyPackages : MonoBehaviour
 
                                         // JSON dosyasýný güncelle ve kaydet
                                         SaveUpdatedPackageData(packageData);
+
+                                        StartCoroutine(ContunieButtonDelay());
+
                                     }
                                 });
                             }
@@ -127,6 +132,12 @@ public class MyPackages : MonoBehaviour
         {
             Debug.LogWarning("Paket JSON dosyasý bulunamadý.");
         }
+    }
+
+    IEnumerator ContunieButtonDelay()
+    {
+        yield return new WaitForSeconds(4.5f);
+        cardContunieBtn.SetActive(true);
     }
 
     void SaveUpdatedPackageData(PackagesDictionary packageData)

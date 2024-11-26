@@ -181,6 +181,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8061095990496328862}
   - component: {fileID: 849825324348064290}
+  - component: {fileID: 5072859669904416121}
   m_Layer: 0
   m_Name: UpperSpotLight
   m_TagString: Untagged
@@ -265,6 +266,29 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &5072859669904416121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1058352273437496289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1 &1255969874663409069
 GameObject:
   m_ObjectHideFlags: 0
@@ -671,6 +695,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 4.5
+  minVerticalAngle: -10
+  maxVerticalAngle: 10
 --- !u!1 &6103773237390801792
 GameObject:
   m_ObjectHideFlags: 0
@@ -852,6 +878,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5981775546774435258}
   - component: {fileID: 8453400585130620473}
+  - component: {fileID: 6742187742035995604}
   m_Layer: 0
   m_Name: LowerSpotLight
   m_TagString: Untagged
@@ -936,6 +963,29 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &6742187742035995604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6593886001912289408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1 &7125208448958018502
 GameObject:
   m_ObjectHideFlags: 0
@@ -1178,4 +1228,4 @@ MonoBehaviour:
     x: 0
     y: 0
     width: 1
-    height: 1
+    height: 0.99

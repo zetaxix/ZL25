@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.IO;
+using System.Collections;
 
 public class CardManager : MonoBehaviour
 {

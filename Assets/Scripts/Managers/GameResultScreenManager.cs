@@ -551,7 +551,7 @@ public class GameResultScreenManager : MonoBehaviour
             GameObject card = aiStolenGridParent.GetChild(i).gameObject;
 
             // Kartın koruma durumunu kontrol et
-            bool isProtected = userProtectedFootballers.footballers.Exists(f => f.name == aiStolenFootballer.name);
+            bool isProtected = userProtectedFootballers.footballers.Any(f => f.name == aiStolenFootballer.name);
 
             // Görsel arkaplan rengi güncelle
             UpdateCardBackground(card, isProtected);
@@ -559,7 +559,7 @@ public class GameResultScreenManager : MonoBehaviour
             if (!isProtected)
             {
                 // Kart korunmuyorsa, kullanıcı listesinden sil
-                FootballerInfo footballerToRemove = myFootballers.footballers.FirstOrDefault(f => f.name == aiStolenFootballer.name);
+                var footballerToRemove = myFootballers.footballers.FirstOrDefault(f => f.name == aiStolenFootballer.name);
                 if (footballerToRemove != null)
                 {
                     myFootballers.footballers.Remove(footballerToRemove);
