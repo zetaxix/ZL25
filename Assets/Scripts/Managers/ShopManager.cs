@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using TMPro;
 using UnityEngine;
@@ -46,6 +47,38 @@ public class ShopManager : MonoBehaviour
         UpdateMoneyUI();
     }
 
+     public static string FormatCurrency(string priceString)
+    {
+        // Fiyatýn zaten formatlý olup olmadýðýný kontrol et
+        if (priceString.EndsWith("M€") || priceString.EndsWith("K€") || priceString.EndsWith("€"))
+        {
+            // Eðer fiyat zaten formatlýysa dokunma
+            return priceString;
+        }
+
+        // Fiyat formatlý deðilse iþleme devam et
+        if (int.TryParse(priceString, out int price))
+        {
+            if (price >= 1000000)
+            {
+                return $"{(price / 1000000f).ToString("0.#", CultureInfo.InvariantCulture)}M€";
+            }
+            else if (price >= 1000)
+            {
+                return $"{(price / 1000f).ToString("0.#", CultureInfo.InvariantCulture)}K€";
+            }
+            else
+            {
+                return $"{price}€";
+            }
+        }
+        else
+        {
+            Debug.LogError("Geçersiz fiyat formatý: " + priceString);
+            return "Hata!";
+        }
+    }
+
     public void BackToMenu()
     {
         SceneManager.LoadScene(1);
@@ -54,7 +87,7 @@ public class ShopManager : MonoBehaviour
     private void UpdateMoneyUI()
     {
         int currentMoney = PlayerPrefs.GetInt("money", 1000);
-        moneyText.text = $"Money: €{currentMoney.ToString("N0")}";
+        moneyText.text = FormatCurrency($"{currentMoney.ToString()}");
     }
 
     private void InitializePackagesJson()

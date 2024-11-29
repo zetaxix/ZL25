@@ -45,41 +45,61 @@ public class GameModeScreenManager : MonoBehaviour
 
     void AddOpponentNames()
     {
-        // Rakip kullanýcý adlarýný gerçekçi ve global futbol temalý olarak ekle
         string opponentNamesText = @"
-JacobKuzscse
-HASMES
-kUBÝLS21
-Speedy99
-GameMaster
-ShadowHunter
-EpicWarrior
-PixelNinja
-SilentAssassin
-CrazyRider
-GoalKing
-TheStriker
-ProMidfielder
-DefensiveWall
-SoccerStar10
-FootballFanatic
-PenaltyMaster
-UltimateGoalie
-DribbleKing
-CrossExpert
-Futbolista7
-ChampionPlayer
-Legendary11
-KickerPro
-TacticGenius
-PassMaster99
-MatchWinner
-FieldCommander
-GoldenBootX
-FreekickHero";
+GoalPro
+Dribler
+Striker
+KickerX
+TaktiX
+MidFldr
+Defenz
+GolKing
+SaveIt
+Footie7
+Champ99
+BootMan
+PlayMkr
+ShotPro
+Swift99
+Passer
+TurfGuy
+Kuba10
+SniperX
+Glory11
+AssistX
+KickIt
+Dribble
+Power99
+Tactico
+GoaliX
+WinNow
+FutbolX
+Soccer7
+BigKick
+KickMax
+GoalieZ
+FreeX99
+WingMan
+StarPro
+Cross99
+FinshIt
+StrongD
+FootFX
+Quick99
+NetShot
+MidHero
+Swift11
+GoalFix
+TurfPro
+UltPlay
+XDribbl
+FastOne
+TopKick
+EndLine
+PlayFX";
 
-        // Kullanýcý adlarýný satýrlara böl ve listeye ekle
-        string[] names = opponentNamesText.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);
+    // Kullanýcý adlarýný satýrlara böl ve listeye ekle
+    string[] names = opponentNamesText.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);
         foreach (string name in names)
         {
             opponentNames.Add(name.Trim());

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using TMPro;
@@ -27,8 +28,8 @@ public class GameResultScreenManager : MonoBehaviour
     [SerializeField] private int columns = 4;       // Grid sütun sayısı
 
     FootballerInfoListWrapper footballerList;
-    private List<FootballerInfo> aiProtectedCards; // Bilgisayarın koruduğu kartların bilgileri
-    private List<FootballerInfo> userSelectedCards; // Bilgisayarın koruduğu kartların bilgileri
+    private List<FootballerInfo> aiProtectedCards; 
+    private List<FootballerInfo> userSelectedCards; 
 
     [SerializeField] GameObject menuButton;
 
@@ -61,16 +62,16 @@ public class GameResultScreenManager : MonoBehaviour
         {
             // KULLANICI KAZANDI, KULLANICI KARTLARI ÇALACAK, BİLGİSAYARA KORUMAYA ÇALIŞACAK.
 
-            resultScreenUptext.text = "Rakibin Koruduğu Kartlar";
-            resultScreenLowtext.text = "Çaldığın Kartlar";
+            resultScreenUptext.text = "RAKIBIN KORUDUGU KARTLAR";
+            resultScreenLowtext.text = "CALDIGIN KARTLAR";
 
         }
         else if (whoWin == "OpponentWin")
         {
             // BİLGİSAYAR KAZANDI, BİLGİSAYAR KARTLARI ÇALACAK, KULLANICI KORUMAYA ÇALIŞACAK.
 
-            resultScreenUptext.text = "Rakibin Çalmak İstediği Kartlar";
-            resultScreenLowtext.text = "Koruduğun Kartlar";
+            resultScreenUptext.text = "RAKIBIN CALMAK ISTEDIGI KARTLAR";
+            resultScreenLowtext.text = "KORUDUGUN KARTLAR";
 
         }
     }
@@ -431,12 +432,12 @@ public class GameResultScreenManager : MonoBehaviour
 
             if (whoWin == "OpponentWin")
             {
-                if (priceText != null) priceText.text = footballer.price;
+                if (priceText != null) priceText.text = FormatCurrency(footballer.price);
 
             }
             else
             {
-                if (priceText != null) priceText.text = FormatPrice(int.Parse(footballer.price));
+                if (priceText != null) priceText.text = FormatCurrency(footballer.price);
             }
         }
 
@@ -753,11 +754,11 @@ public class GameResultScreenManager : MonoBehaviour
 
             if (whoWin == "OpponentWin")
             {
-                if (priceText != null) priceText.text = footballer.price;
+                if (priceText != null) priceText.text = FormatCurrency(footballer.price);
 
             }else
             {
-                if (priceText != null) priceText.text = FormatPrice(int.Parse(footballer.price));
+                if (priceText != null) priceText.text = FormatCurrency(footballer.price);
             }
         }
 
@@ -825,12 +826,29 @@ public class GameResultScreenManager : MonoBehaviour
     }
     #endregion
 
-    /// <summary>
-    /// Fiyatları daha okunabilir bir biçimde biçimlendirir (örn. "1000000" → "1,000,000").
-    /// </summary>
-    private string FormatPrice(int price)
+    //Fiyatların formatları değiştirmeye yarayan fonksiyon
+    public static string FormatCurrency(string priceString)
     {
-        return price.ToString("N0"); // Virgülle ayırarak biçimlendirme
+        if (int.TryParse(priceString, out int price))
+        {
+            if (price >= 1000000)
+            {
+                return $"{(price / 1000000f).ToString("0.#", CultureInfo.InvariantCulture)}M€";
+            }
+            else if (price >= 1000)
+            {
+                return $"{(price / 1000f).ToString("0.#", CultureInfo.InvariantCulture)}K€";
+            }
+            else
+            {
+                return $"{price}€";
+            }
+        }
+        else
+        {
+            Debug.LogError("Geçersiz fiyat formatı: " + priceString);
+            return "Hata!";
+        }
     }
 
 }

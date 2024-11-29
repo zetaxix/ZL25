@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Globalization;
 
 public class MyFootballers : MonoBehaviour
 {
@@ -70,7 +71,7 @@ public class MyFootballers : MonoBehaviour
         // UI öðelerini doldur
         nameText.text = footballer.name;
         ratingText.text = footballer.rating;
-        priceText.text = footballer.price;
+        priceText.text = FormatCurrency(footballer.price);
         countText.text = $"x{footballer.footballerCount}";
 
         // Paket türüne göre arka plan rengini deðiþtir
@@ -157,7 +158,7 @@ public class MyFootballers : MonoBehaviour
             // UI öðelerine futbolcu bilgilerini aktar
             nameText.text = footballer.name;
             ratingText.text = footballer.rating.ToString();
-            priceText.text = footballer.price;
+            priceText.text = FormatCurrency(footballer.price);
 
             // Oyuncunun kartlarýnýn görsellerini yükleme
             playerImage.texture = TextureCache.Instance.LoadTexture("MyRepository/FootballerPhotos", footballer.playerImageName);
@@ -184,4 +185,37 @@ public class MyFootballers : MonoBehaviour
 
         TextureCache.Instance.ClearCache();
     }
+
+    public static string FormatCurrency(string priceString)
+    {
+        // Fiyatýn zaten formatlý olup olmadýðýný kontrol et
+        if (priceString.EndsWith("M€") || priceString.EndsWith("K€") || priceString.EndsWith("€"))
+        {
+            // Eðer fiyat zaten formatlýysa dokunma
+            return priceString;
+        }
+
+        // Fiyat formatlý deðilse iþleme devam et
+        if (int.TryParse(priceString, out int price))
+        {
+            if (price >= 1000000)
+            {
+                return $"{(price / 1000000f).ToString("0.#", CultureInfo.InvariantCulture)}M€";
+            }
+            else if (price >= 1000)
+            {
+                return $"{(price / 1000f).ToString("0.#", CultureInfo.InvariantCulture)}K€";
+            }
+            else
+            {
+                return $"{price}€";
+            }
+        }
+        else
+        {
+            Debug.LogError("Geçersiz fiyat formatý: " + priceString);
+            return "Hata!";
+        }
+    }
+
 }

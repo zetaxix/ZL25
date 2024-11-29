@@ -20,10 +20,11 @@ public class ButtonManager : MonoBehaviour
                 GameScreenOpponentCardManager.Instance.SaveUserSelectedCardsToJson();
                 GameScreenOpponentCardManager.Instance.SaveAIProtectedCardsToJson();
 
-                GameResultScreenManager.Instance.ShowAICard();
                 GameResultScreenManager.Instance.ShowUserStolenCards();
+                GameResultScreenManager.Instance.ShowAICard();
 
-            }else if (whoWin == "OpponentWin")
+            }
+            else if (whoWin == "OpponentWin")
             {
                 Debug.Log("BÝLGÝSAYAR KAZANDI LAAAAN!!!");
 

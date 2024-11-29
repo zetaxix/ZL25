@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,11 +8,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [SerializeField] TextMeshPro userScoreText;   // Kullanýcý skoru
-    [SerializeField] TextMeshPro opponentScoreText; // Rakip skoru
-
-    private int userScore = 0;      // Kullanýcý skoru
-    private int opponentScore = 0; // Rakip skoru
+    [Header("Scoreboard Settings")]
+    [SerializeField] Animator ScoreboardAnim;
+    [SerializeField] TextMeshProUGUI userScoreText;   // Kullanýcý skoru
+    [SerializeField] TextMeshProUGUI opponentScoreText; // Rakip skoru
+    [SerializeField] TextMeshProUGUI timerText; // Rakip skoru
 
     [Header("Cards Objects")]
     [SerializeField] GameObject UserCards;
@@ -28,8 +29,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] TextMeshPro MatchFinishStatus;
     [SerializeField] TextMeshPro ResultButton;
 
+    // Match Check
     private bool matchFinish = false;    // Maçýn bitip bitmediðini gösterir
     private bool matchStatusChecked = false; // Maç durumu bir kez kontrol edildi mi?
+
+    // Initialize Score
+    private int userScore = 0;      // Kullanýcý skoru
+    private int opponentScore = 0; // Rakip skoru
+
+    //Timer Settings
+    private float elapsedTime = 0f; // Geçen süre
+    private bool isRunning = false; // Timer çalýþýyor mu?
 
     void Awake()
     {
@@ -43,6 +53,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        //Scoreboard Anim and Timer Started
+        StartCoroutine( StartScoreboardAnim() );
+    }
+
     private void Update()
     {
         if (!matchStatusChecked && (userScore == 3 || opponentScore == 3))
@@ -50,7 +66,64 @@ public class GameManager : MonoBehaviour
             matchFinish = true;
             MatchStatusCheck();
         }
+
+        if (isRunning)
+        {
+            // Geçen süreyi artýr
+            elapsedTime += Time.deltaTime;
+
+            // Zamaný uygun formatta yazdýr
+            UpdateTimerText();
+        }
     }
+
+    #region Scoreboard Animation
+
+    IEnumerator StartScoreboardAnim()
+    {
+        yield return new WaitForSeconds(2.30f);
+        ScoreboardAnim.SetTrigger("MatchStarted");
+
+        //Scoreboard timer started
+        StartTimer();
+    }
+
+    #endregion
+
+    #region Timer Settings
+
+    // Timer'ý baþlatan fonksiyon
+    public void StartTimer()
+    {
+        isRunning = true;
+        elapsedTime = 0f; // Zamaný sýfýrla
+    }
+
+    // Timer'ý durduran fonksiyon
+    public void StopTimer()
+    {
+        isRunning = false;
+    }
+
+    // Timer'ý sýfýrlayan fonksiyon
+    public void ResetTimer()
+    {
+        elapsedTime = 0f;
+        UpdateTimerText();
+    }
+
+    // Timer'ýn TextMeshPro'ya yazdýrýlmasýný saðlayan fonksiyon
+    private void UpdateTimerText()
+    {
+        // Elapsed time'ý dakikalar ve saniyelere böl
+        int minutes = Mathf.FloorToInt(elapsedTime / 60f); // Dakikayý hesapla
+        int seconds = Mathf.FloorToInt(elapsedTime % 60f); // Saniyeyi hesapla
+
+        // TextMeshPro'da uygun formatta göster
+        timerText.text = $"{minutes:00}:{seconds:00}";
+    }
+
+    #endregion
 
     private void MatchStatusCheck()
     {
@@ -70,17 +143,43 @@ public class GameManager : MonoBehaviour
 
             MatchFinishScreen.SetActive(true);
 
+            StopTimer();
+
             if (userScore == 3)
             {
-                matchStatusText.text = "Maçý Kazandýn!";
-                matchButton.text = "Kart Çalmaya Geç =>";
+                matchStatusText.text = "KAZANDIN!";
+                matchButton.text = "DEVAM ET";
+
+                // matchButton'un içindeki TextMeshPro bileþenine eriþim
+                TextMeshProUGUI matchStatusTextComp = matchStatusText.GetComponentInChildren<TextMeshProUGUI>();
+
+                if (matchStatusTextComp != null)
+                {
+                    matchStatusTextComp.color = Color.green; // Metin rengini yeþil yap
+                }
+                else
+                {
+                    Debug.LogWarning("matchButton üzerinde TextMeshProUGUI bileþeni bulunamadý.");
+                }
 
                 PlayerPrefs.SetString("WhoWin", "UserWin");
             }
             else if (opponentScore == 3)
             {
-                matchStatusText.text = "Maçý Kaybettin!";
-                matchButton.text = "Kart Korumaya Geç =>";
+                matchStatusText.text = "KAYBETTIN!";
+                matchButton.text = "DEVAM ET";
+
+                // matchButton'un içindeki TextMeshPro bileþenine eriþim
+                TextMeshProUGUI matchStatusTextComp = matchStatusText.GetComponentInChildren<TextMeshProUGUI>();
+
+                if (matchStatusTextComp != null)
+                {
+                    matchStatusTextComp.color = Color.red; // Metin rengini yeþil yap
+                }
+                else
+                {
+                    Debug.LogWarning("matchButton üzerinde TextMeshProUGUI bileþeni bulunamadý.");
+                }
 
                 PlayerPrefs.SetString("WhoWin", "OpponentWin");
 
@@ -95,8 +194,8 @@ public class GameManager : MonoBehaviour
             CardStoleAndSaveScreen.SetActive(true);
             MatchFinishScreen.SetActive(false);
 
-            TitleStatus.text = "Kart Çalma";
-            MatchFinishStatus.text = "Çalmak istediðiniz 3 tane kartý seçin ve sonuca geçin.";
+            TitleStatus.text = "KART CALMA";
+            MatchFinishStatus.text = "Calmak istediginiz 3 tane karti secin ve sonuc ekranina gecin.";
 
             GameScreenOpponentCardManager.Instance.StartShowOpponentCards();
 
@@ -106,8 +205,8 @@ public class GameManager : MonoBehaviour
             CardStoleAndSaveScreen.SetActive(true);
             MatchFinishScreen.SetActive(false);
 
-            TitleStatus.text = "Kart Koruma";
-            MatchFinishStatus.text = "Korumak istediðiniz 3 tane kartý seçin ve sonuca geçin.";
+            TitleStatus.text = "KART KORUMA";
+            MatchFinishStatus.text = "Korumak istediginiz 3 tane karti secin ve sonuc ekranina gecin.";
 
             KaliteKazanirManager.Instance.LoadAndDisplayFootballersForProtectedScreen();
         }

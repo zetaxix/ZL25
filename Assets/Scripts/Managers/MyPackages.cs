@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.IO;
+using UnityEditor.ShaderGraph.Serialization;
 
 public class MyPackages : MonoBehaviour
 {
@@ -21,6 +22,13 @@ public class MyPackages : MonoBehaviour
     [SerializeField] CardManager cardManager; // CardManager referansý
 
     [SerializeField] GameObject cardContunieBtn;
+
+    [Header("Stads Photos")]
+    [SerializeField] RawImage stadRawImage;
+
+    [SerializeField] Texture bronzeStadTexture;
+    [SerializeField] Texture silverStadTexture;
+    [SerializeField] Texture goldStadTexture;
 
     private void Awake()
     {
@@ -91,38 +99,41 @@ public class MyPackages : MonoBehaviour
 
                             if (packageButton != null)
                             {
-                                // Butona týklama event'i ekle
                                 packageButton.onClick.AddListener(() =>
                                 {
-                                    // Paket sayýsýný 1 eksilt
+                                    // Paket sayýsýný azalt
                                     if (package.count > 0)
                                     {
                                         package.count--;
-                                        // TextMeshPro içerisine yeni sayýyý ata
                                         countText.text = $"x{package.count.ToString()}";
                                         Debug.Log($"{package.name} paketi sayýsý: {package.count}");
 
+                                        // Paket ekranlarýný yönet
                                         packageScreen.SetActive(false);
                                         cardScreen.SetActive(true);
 
-                                        // Hangi paketin açýldýðýný CardManager'a gönder
+                                        // Görseli deðiþtir
+                                        UpdateStadImage(package.name);
+
+                                        // CardManager'a paketin türünü bildir
                                         cardManager.SetPackageType(package.name);
 
-                                        // Sayý sýfýr olduðunda butonu devre dýþý býrak ve prefab'ý kaldýr
+                                        // JSON dosyasýný güncelle
+                                        SaveUpdatedPackageData(packageData);
+
+                                        // Devam butonunu gecikmeli olarak göster
+                                        StartCoroutine(ContunieButtonDelay());
+
+                                        // Sayý sýfýrsa prefab'ý kaldýr
                                         if (package.count == 0)
                                         {
                                             packageButton.interactable = false;
-                                            Destroy(instantiatedPackage);  // Paket prefab'ýný ekrandan kaldýr
+                                            Destroy(instantiatedPackage);
                                         }
-
-                                        // JSON dosyasýný güncelle ve kaydet
-                                        SaveUpdatedPackageData(packageData);
-
-                                        StartCoroutine(ContunieButtonDelay());
-
                                     }
                                 });
                             }
+
                         }
                     }
                 }
@@ -133,6 +144,34 @@ public class MyPackages : MonoBehaviour
             Debug.LogWarning("Paket JSON dosyasý bulunamadý.");
         }
     }
+
+    void UpdateStadImage(string packageType)
+    {
+        switch (packageType)
+        {
+            case "Bronze":
+                stadRawImage.texture = bronzeStadTexture;
+                stadRawImage.gameObject.SetActive(true);
+
+                break;
+            case "Silver":
+                stadRawImage.texture = silverStadTexture;
+                stadRawImage.gameObject.SetActive(true);
+
+                break;
+            case "Gold":
+                stadRawImage.texture = goldStadTexture;
+                stadRawImage.gameObject.SetActive(true);
+
+                break;
+            default:
+                Debug.LogWarning("Bilinmeyen paket türü!");
+                break;
+        }
+
+        Debug.Log($"{packageType} paketinin görseli ayarlandý.");
+    }
+
 
     IEnumerator ContunieButtonDelay()
     {

@@ -23,8 +23,8 @@ public class KaliteKazanirManager : MonoBehaviour
     [SerializeField] int columns;
 
     [Header("Text Settings")]
-    [SerializeField] TextMeshPro usernameText;
-    [SerializeField] TextMeshPro opponentUsernameText;
+    [SerializeField] TextMeshProUGUI usernameText;
+    [SerializeField] TextMeshProUGUI opponentUsernameText;
 
     [Header("Selection Settings")]
     [SerializeField] private GameObject ForList3dopponentCardPrefab;
