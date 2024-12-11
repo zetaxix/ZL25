@@ -3,18 +3,22 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.Networking;
+using UnityEngine.Video;
 
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI usernameText;
 
-    [SerializeField] private GameObject loadingScreen; // Loading ekraný
-    [SerializeField] private TextMeshProUGUI loadingText;
+    [Header("Video Player Settings")]
+    [SerializeField] private VideoPlayer videoPlayer; // VideoPlayer bileþeni
+    [SerializeField] private VideoClip[] videoClips; // Oynatýlacak video klipler
 
     private string apiUrl = "https://www.healthtourismclinics.com/zl25beta2/kelime/sil.php"; // PHP API URL
 
     private void Awake()
     {
+        PlayRandomVideo();
+
         // "money" anahtarýnýn var olup olmadýðýný kontrol et
         if (!PlayerPrefs.HasKey("money"))
         {
@@ -28,6 +32,25 @@ public class MenuManager : MonoBehaviour
     private void Start()
     {
         CheckandLoadUsername();
+    }
+
+    private void PlayRandomVideo()
+    {
+        if (videoClips.Length == 0)
+        {
+            Debug.LogWarning("Video klip listesi boþ!");
+            return;
+        }
+
+        // Rastgele bir video klip seç
+        int randomIndex = Random.Range(0, videoClips.Length);
+        VideoClip selectedClip = videoClips[randomIndex];
+
+        // Seçilen klibi oynat
+        videoPlayer.clip = selectedClip;
+        videoPlayer.Play();
+
+        Debug.Log($"Oynatýlan video: {selectedClip.name}");
     }
 
     void CheckandLoadUsername()
@@ -107,11 +130,6 @@ public class MenuManager : MonoBehaviour
 
     private System.Collections.IEnumerator LoadSceneAsync(string sceneName)
     {
-        // Loading ekranýný göster
-        if (loadingScreen != null)
-        {
-            loadingScreen.SetActive(true);
-        }
 
         // Sahneyi yüklemeye baþla
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
@@ -120,22 +138,18 @@ public class MenuManager : MonoBehaviour
         while (!operation.isDone)
         {
             float progress = Mathf.Clamp01(operation.progress / 0.9f); // Yüzdelik hesap
-            if (loadingText != null)
-            {
-                loadingText.text = $"Loading... {progress * 100:F0}%";
-            }
-
+           
             yield return null; // Bir sonraki frame'i bekle
         }
     }
 
     public void GoToFootballersScene()
     {
-        SceneManager.LoadScene(3);
+        StartCoroutine(LoadSceneAsync("MyFootballers"));
     }
 
     public void GotoGameMode()
     {
-        SceneManager.LoadScene(4);
+        StartCoroutine(LoadSceneAsync("GameModeScreen"));
     }
 }

@@ -287,6 +287,8 @@ PlayFX";
         matchFoundText.gameObject.SetActive(true);
         BackToModeScreen.gameObject.SetActive(false);
 
+        Destroy(MenuMusicManager.Instance.gameObject);
+
         //süreyi durdur
         StopMatchTimer();
 

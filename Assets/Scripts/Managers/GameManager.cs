@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Scoreboard Settings")]
     [SerializeField] Animator ScoreboardAnim;
+    [SerializeField] GameObject Scoreboard;
     [SerializeField] TextMeshProUGUI userScoreText;   // Kullanýcý skoru
     [SerializeField] TextMeshProUGUI opponentScoreText; // Rakip skoru
     [SerializeField] TextMeshProUGUI timerText; // Rakip skoru
@@ -142,6 +143,7 @@ public class GameManager : MonoBehaviour
             OpponentCards.SetActive(false);
 
             MatchFinishScreen.SetActive(true);
+            Scoreboard.SetActive(false);
 
             StopTimer();
 

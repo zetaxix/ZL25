@@ -62,16 +62,16 @@ public class GameResultScreenManager : MonoBehaviour
         {
             // KULLANICI KAZANDI, KULLANICI KARTLARI ÇALACAK, BİLGİSAYARA KORUMAYA ÇALIŞACAK.
 
-            resultScreenUptext.text = "RAKIBIN KORUDUGU KARTLAR";
-            resultScreenLowtext.text = "CALDIGIN KARTLAR";
+            resultScreenUptext.text = "Rakibin Koruduğu Kartlar";
+            resultScreenLowtext.text = "Çaldığın Kartlar";
 
         }
         else if (whoWin == "OpponentWin")
         {
             // BİLGİSAYAR KAZANDI, BİLGİSAYAR KARTLARI ÇALACAK, KULLANICI KORUMAYA ÇALIŞACAK.
 
-            resultScreenUptext.text = "RAKIBIN CALMAK ISTEDIGI KARTLAR";
-            resultScreenLowtext.text = "KORUDUGUN KARTLAR";
+            resultScreenUptext.text = "Rakibin Çalmak İstediği Kartlar";
+            resultScreenLowtext.text = "Koruduğun Kartlar";
 
         }
     }
@@ -432,12 +432,12 @@ public class GameResultScreenManager : MonoBehaviour
 
             if (whoWin == "OpponentWin")
             {
-                if (priceText != null) priceText.text = FormatCurrency(footballer.price);
+                if (priceText != null) priceText.text = footballer.price;
 
             }
             else
             {
-                if (priceText != null) priceText.text = FormatCurrency(footballer.price);
+                if (priceText != null) priceText.text = footballer.price;
             }
         }
 
@@ -754,11 +754,11 @@ public class GameResultScreenManager : MonoBehaviour
 
             if (whoWin == "OpponentWin")
             {
-                if (priceText != null) priceText.text = FormatCurrency(footballer.price);
+                if (priceText != null) priceText.text = footballer.price;
 
             }else
             {
-                if (priceText != null) priceText.text = FormatCurrency(footballer.price);
+                if (priceText != null) priceText.text = footballer.price;
             }
         }
 
@@ -825,31 +825,6 @@ public class GameResultScreenManager : MonoBehaviour
         CreateStolenCardsGrid(footballerList.footballers);
     }
     #endregion
-
-    //Fiyatların formatları değiştirmeye yarayan fonksiyon
-    public static string FormatCurrency(string priceString)
-    {
-        if (int.TryParse(priceString, out int price))
-        {
-            if (price >= 1000000)
-            {
-                return $"{(price / 1000000f).ToString("0.#", CultureInfo.InvariantCulture)}M€";
-            }
-            else if (price >= 1000)
-            {
-                return $"{(price / 1000f).ToString("0.#", CultureInfo.InvariantCulture)}K€";
-            }
-            else
-            {
-                return $"{price}€";
-            }
-        }
-        else
-        {
-            Debug.LogError("Geçersiz fiyat formatı: " + priceString);
-            return "Hata!";
-        }
-    }
 
 }
 
