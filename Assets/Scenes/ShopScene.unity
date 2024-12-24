@@ -2606,77 +2606,77 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bronzePackage:
   - id: 1
-    name: Jean Onana
+    name: Footballer1
     rating: 65
     countryFlag: {fileID: 2800000, guid: 082567a1a67b8404aac987096c190dfb, type: 3}
     teamLogo: {fileID: 2800000, guid: 326ed1405d7c9ab419087bfd17002b2b, type: 3}
     footballerImage: {fileID: 2800000, guid: ad236a00f383b1a499e1cb102580f6ae, type: 3}
     price: 3700000
   - id: 2
-    name: "Ercan K\u0131z\u0131lkoca"
+    name: Footballer2
     rating: 60
     countryFlag: {fileID: 2800000, guid: 082567a1a67b8404aac987096c190dfb, type: 3}
     teamLogo: {fileID: 2800000, guid: 974f482dc557f1b498dad77450c36be4, type: 3}
     footballerImage: {fileID: 2800000, guid: 15e0cfa96d2ecce4ca087a2bafab5d4f, type: 3}
     price: 4700000
   - id: 3
-    name: "Turgay \xC7elik"
+    name: Footballer3
     rating: 60
     countryFlag: {fileID: 2800000, guid: fce2f451c74c0cc4fa022964343bc0b5, type: 3}
     teamLogo: {fileID: 2800000, guid: 70b15d38a9be46c40a84858e63d49f71, type: 3}
     footballerImage: {fileID: 2800000, guid: c8759373d2c464045a60a1632121ccd6, type: 3}
     price: 7700000
   - id: 4
-    name: "\xD6zay Yenge"
+    name: Footballer4
     rating: 60
     countryFlag: {fileID: 2800000, guid: fce2f451c74c0cc4fa022964343bc0b5, type: 3}
     teamLogo: {fileID: 2800000, guid: 70b15d38a9be46c40a84858e63d49f71, type: 3}
     footballerImage: {fileID: 2800000, guid: c8759373d2c464045a60a1632121ccd6, type: 3}
     price: 7700000
   - id: 5
-    name: Baran
+    name: Footballer5
     rating: 60
     countryFlag: {fileID: 2800000, guid: fce2f451c74c0cc4fa022964343bc0b5, type: 3}
     teamLogo: {fileID: 2800000, guid: 70b15d38a9be46c40a84858e63d49f71, type: 3}
     footballerImage: {fileID: 2800000, guid: c8759373d2c464045a60a1632121ccd6, type: 3}
     price: 7700000
   - id: 6
-    name: "\xDCmittttt"
+    name: Footballer6
     rating: 60
     countryFlag: {fileID: 2800000, guid: fce2f451c74c0cc4fa022964343bc0b5, type: 3}
     teamLogo: {fileID: 2800000, guid: 70b15d38a9be46c40a84858e63d49f71, type: 3}
     footballerImage: {fileID: 2800000, guid: c8759373d2c464045a60a1632121ccd6, type: 3}
     price: 7700000
   - id: 7
-    name: Alican
+    name: Footballer7
     rating: 60
     countryFlag: {fileID: 2800000, guid: fce2f451c74c0cc4fa022964343bc0b5, type: 3}
     teamLogo: {fileID: 2800000, guid: 70b15d38a9be46c40a84858e63d49f71, type: 3}
     footballerImage: {fileID: 2800000, guid: c8759373d2c464045a60a1632121ccd6, type: 3}
     price: 7700000
   - id: 8
-    name: "Ya\u011F\u0131zzz"
+    name: Footballer8
     rating: 60
     countryFlag: {fileID: 2800000, guid: fce2f451c74c0cc4fa022964343bc0b5, type: 3}
     teamLogo: {fileID: 2800000, guid: 70b15d38a9be46c40a84858e63d49f71, type: 3}
     footballerImage: {fileID: 2800000, guid: c8759373d2c464045a60a1632121ccd6, type: 3}
     price: 7700000
   - id: 9
-    name: Duran
+    name: Footballer9
     rating: 65
     countryFlag: {fileID: 2800000, guid: fce2f451c74c0cc4fa022964343bc0b5, type: 3}
     teamLogo: {fileID: 2800000, guid: 70b15d38a9be46c40a84858e63d49f71, type: 3}
     footballerImage: {fileID: 2800000, guid: c8759373d2c464045a60a1632121ccd6, type: 3}
     price: 7700000
   - id: 10
-    name: Senem
+    name: Footballer10
     rating: 60
     countryFlag: {fileID: 2800000, guid: fce2f451c74c0cc4fa022964343bc0b5, type: 3}
     teamLogo: {fileID: 2800000, guid: 70b15d38a9be46c40a84858e63d49f71, type: 3}
     footballerImage: {fileID: 2800000, guid: c8759373d2c464045a60a1632121ccd6, type: 3}
     price: 7700000
   - id: 11
-    name: "Murat Day\u0131m"
+    name: Footballer11
     rating: 62
     countryFlag: {fileID: 2800000, guid: fce2f451c74c0cc4fa022964343bc0b5, type: 3}
     teamLogo: {fileID: 2800000, guid: 70b15d38a9be46c40a84858e63d49f71, type: 3}
@@ -2684,7 +2684,7 @@ MonoBehaviour:
     price: 7700000
   silverPackage:
   - id: 1
-    name: "Bar\u0131\u015F Alper Y\u0131lmaz"
+    name: Footballer12
     rating: 75
     countryFlag: {fileID: 2800000, guid: fce2f451c74c0cc4fa022964343bc0b5, type: 3}
     teamLogo: {fileID: 2800000, guid: 974f482dc557f1b498dad77450c36be4, type: 3}
@@ -2692,21 +2692,21 @@ MonoBehaviour:
     price: 2100000
   goldPackage:
   - id: 1
-    name: Cristiano Ronaldo
+    name: Footballer13
     rating: 88
     countryFlag: {fileID: 2800000, guid: 71a0e1d38ec94404c9d9d4b02e5ee4b0, type: 3}
     teamLogo: {fileID: 2800000, guid: 974ccca9ea5b8394abc3e479d1b92c6b, type: 3}
     footballerImage: {fileID: 2800000, guid: 158fe47865f6a7e41a1d4fdcdf681401, type: 3}
     price: 15000000
   - id: 2
-    name: Lionel Messi
+    name: Footballer14
     rating: 89
     countryFlag: {fileID: 2800000, guid: dd4f1f50a2acfb24a863101090c1ee95, type: 3}
     teamLogo: {fileID: 2800000, guid: fd905d9352ccee54e879bf3e8542fc4c, type: 3}
     footballerImage: {fileID: 2800000, guid: 17601d0a0f736564499ee232237fee1b, type: 3}
     price: 25000000
   - id: 3
-    name: Neymar
+    name: Footballer15
     rating: 87
     countryFlag: {fileID: 2800000, guid: b33c9b78dab8e1142a6e51c7dad913a3, type: 3}
     teamLogo: {fileID: 2800000, guid: 70b15d38a9be46c40a84858e63d49f71, type: 3}
@@ -3304,7 +3304,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Devam
+  m_text: Continue
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bcf135501b7d7df4e82daa5db6bcd353, type: 2}
   m_sharedMaterial: {fileID: -4426484306813245475, guid: bcf135501b7d7df4e82daa5db6bcd353, type: 2}

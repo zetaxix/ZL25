@@ -132,7 +132,7 @@ public class GameManager : MonoBehaviour
         {
             matchStatusChecked = true; // Fonksiyonun bir daha çalýþmamasýný saðlar.
 
-            Debug.Log($"Maç Bitti! {PlayerPrefs.GetString("username")} kazandý!!");
+            Debug.Log($"Maç Bitti! {PlayerPrefs.GetString("username")} win!");
 
             CardMovement.instance.LockAllCards();
             CardMovement.instance.cardAreaElements.SetActive(false);
@@ -149,8 +149,8 @@ public class GameManager : MonoBehaviour
 
             if (userScore == 3)
             {
-                matchStatusText.text = "KAZANDIN!";
-                matchButton.text = "DEVAM ET";
+                matchStatusText.text = "You Win!";
+                matchButton.text = "Continue";
 
                 // matchButton'un içindeki TextMeshPro bileþenine eriþim
                 TextMeshProUGUI matchStatusTextComp = matchStatusText.GetComponentInChildren<TextMeshProUGUI>();
@@ -168,8 +168,8 @@ public class GameManager : MonoBehaviour
             }
             else if (opponentScore == 3)
             {
-                matchStatusText.text = "KAYBETTIN!";
-                matchButton.text = "DEVAM ET";
+                matchStatusText.text = "You Lost!";
+                matchButton.text = "Continue";
 
                 // matchButton'un içindeki TextMeshPro bileþenine eriþim
                 TextMeshProUGUI matchStatusTextComp = matchStatusText.GetComponentInChildren<TextMeshProUGUI>();
@@ -196,8 +196,8 @@ public class GameManager : MonoBehaviour
             CardStoleAndSaveScreen.SetActive(true);
             MatchFinishScreen.SetActive(false);
 
-            TitleStatus.text = "KART CALMA";
-            MatchFinishStatus.text = "Calmak istediginiz 3 tane karti secin ve sonuc ekranina gecin.";
+            TitleStatus.text = "Card Stealing";
+            MatchFinishStatus.text = "Select the 3 cards you want to steal and go to the result screen.";
 
             GameScreenOpponentCardManager.Instance.StartShowOpponentCards();
 
@@ -207,8 +207,8 @@ public class GameManager : MonoBehaviour
             CardStoleAndSaveScreen.SetActive(true);
             MatchFinishScreen.SetActive(false);
 
-            TitleStatus.text = "KART KORUMA";
-            MatchFinishStatus.text = "Korumak istediginiz 3 tane karti secin ve sonuc ekranina gecin.";
+            TitleStatus.text = "Card Protection";
+            MatchFinishStatus.text = "Select the 3 cards you want to protect and go to the result screen.";
 
             KaliteKazanirManager.Instance.LoadAndDisplayFootballersForProtectedScreen();
         }

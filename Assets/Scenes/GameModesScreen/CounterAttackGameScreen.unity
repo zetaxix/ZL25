@@ -1928,7 +1928,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Ma\xE7 Bitti!"
+  m_text: Match Over!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bcf135501b7d7df4e82daa5db6bcd353, type: 2}
   m_sharedMaterial: {fileID: -4426484306813245475, guid: bcf135501b7d7df4e82daa5db6bcd353, type: 2}
@@ -3361,7 +3361,7 @@ MonoBehaviour:
   SilverCardTexture: {fileID: 2800000, guid: b025e07c4d95a874ebd661f26ee1dfc2, type: 3}
   GoldCardTexture: {fileID: 2800000, guid: a6d385635cbb7504c82de9fa766bca1f, type: 3}
   opponentFootballerList:
-  - name: "Ercan K\u0131z\u0131lkoca"
+  - name: Footballer1
     rating: 60
     price: 12500000
     playerImageName: JeanOnana
@@ -3369,7 +3369,7 @@ MonoBehaviour:
     teamLogoImageName: AlHilal
     footballerCount: 0
     packageType: Silver
-  - name: "Onur K\u0131z\u0131lkoca"
+  - name: Footballer2
     rating: 60
     price: 1250000
     playerImageName: neymarSilva
@@ -3377,23 +3377,23 @@ MonoBehaviour:
     teamLogoImageName: Galatasaray
     footballerCount: 0
     packageType: Bronze
-  - name: "Turgay \xC7elik"
-    rating: 60
+  - name: Footballer3
+    rating: 85
     price: 12500000
     playerImageName: lionelMessi
     countryFlagImageName: Turkey
     teamLogoImageName: Galatasaray
     footballerCount: 0
     packageType: Gold
-  - name: "Ya\u011F\u0131z Kars"
-    rating: 80
+  - name: Footballer4
+    rating: 75
     price: 12500000
     playerImageName: lionelMessi
     countryFlagImageName: Turkey
     teamLogoImageName: Galatasaray
     footballerCount: 0
-    packageType: Bronze
-  - name: Senem Kars
+    packageType: Silver
+  - name: Footballer5
     rating: 80
     price: 12500000
     playerImageName: lionelMessi
@@ -3401,7 +3401,7 @@ MonoBehaviour:
     teamLogoImageName: Galatasaray
     footballerCount: 0
     packageType: Gold
-  - name: "\xD6zay Kars"
+  - name: Footballer6
     rating: 60
     price: 12500000
     playerImageName: lionelMessi
@@ -3409,7 +3409,7 @@ MonoBehaviour:
     teamLogoImageName: Galatasaray
     footballerCount: 0
     packageType: Bronze
-  - name: Murat Kars
+  - name: Footballer7
     rating: 60
     price: 1250000
     playerImageName: lionelMessi
@@ -5986,7 +5986,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: DEVAM ET
+  m_text: Continue
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bcf135501b7d7df4e82daa5db6bcd353, type: 2}
   m_sharedMaterial: {fileID: -4426484306813245475, guid: bcf135501b7d7df4e82daa5db6bcd353, type: 2}
@@ -10776,7 +10776,7 @@ GameObject:
   - component: {fileID: 1513096002}
   - component: {fileID: 1513096001}
   m_Layer: 5
-  m_Name: CardContunieButton
+  m_Name: CardContinueButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12735,7 +12735,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Kazand\u0131n!"
+  m_text: You Win!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bcf135501b7d7df4e82daa5db6bcd353, type: 2}
   m_sharedMaterial: {fileID: -4426484306813245475, guid: bcf135501b7d7df4e82daa5db6bcd353, type: 2}
@@ -13459,7 +13459,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1890305462}
   m_LocalRotation: {x: 0.75208974, y: -0, z: -0, w: 0.6590607}
-  m_LocalPosition: {x: 0, y: 0, z: -0.05}
+  m_LocalPosition: {x: 0, y: 0, z: -0.057}
   m_LocalScale: {x: 0.064583145, y: 0.060501195, z: 0.047509514}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13467,7 +13467,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 97.543, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.8131, y: 0.095}
+  m_AnchoredPosition: {x: 0.823, y: 0.096}
   m_SizeDelta: {x: 7.3307, y: 1.7157}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1890305464
@@ -13490,7 +13490,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Kart\u0131n\u0131 Se\xE7 ve Alana S\xFCr\xFCkle"
+  m_text: Select your card and drag it to the field
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bcf135501b7d7df4e82daa5db6bcd353, type: 2}
   m_sharedMaterial: {fileID: -4426484306813245475, guid: bcf135501b7d7df4e82daa5db6bcd353, type: 2}

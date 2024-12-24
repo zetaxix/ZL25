@@ -62,16 +62,16 @@ public class GameResultScreenManager : MonoBehaviour
         {
             // KULLANICI KAZANDI, KULLANICI KARTLARI ÇALACAK, BİLGİSAYARA KORUMAYA ÇALIŞACAK.
 
-            resultScreenUptext.text = "Rakibin Koruduğu Kartlar";
-            resultScreenLowtext.text = "Çaldığın Kartlar";
+            resultScreenUptext.text = "Opponent Protected Cards";
+            resultScreenLowtext.text = "The Cards You Stole";
 
         }
         else if (whoWin == "OpponentWin")
         {
             // BİLGİSAYAR KAZANDI, BİLGİSAYAR KARTLARI ÇALACAK, KULLANICI KORUMAYA ÇALIŞACAK.
 
-            resultScreenUptext.text = "Rakibin Çalmak İstediği Kartlar";
-            resultScreenLowtext.text = "Koruduğun Kartlar";
+            resultScreenUptext.text = "Cards the Opponent Wants to Steal";
+            resultScreenLowtext.text = "Cards You Protect";
 
         }
     }

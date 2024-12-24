@@ -21,6 +21,6 @@ EditorBuildSettings:
     path: Assets/Scenes/GameModeScreen.unity
     guid: a26c230a66c06644b8d716994904c130
   - enabled: 1
-    path: Assets/Scenes/GameModesScreen/KaliteKazanirGameScreen.unity
+    path: Assets/Scenes/GameModesScreen/CounterAttackGameScreen.unity
     guid: 6d1206c8ebc264947ba2928e1ecb6775
   m_configObjects: {}
